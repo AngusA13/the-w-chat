@@ -6,8 +6,6 @@
     <title>Messages</title>
 
     <meta name="theme-color" content="#34C759">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%235BEA76'/%3E%3Cstop offset='1' stop-color='%2334C759'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='115' fill='url(%23g)'/%3E%3Cpath d='M256 104c-91.1 0-165 61.6-165 137.5 0 43.2 24.4 81.8 62.6 107.2L139 414l94.8-43.1c7.3.9 14.7 1.4 22.2 1.4 91.1 0 165-61.6 165-137.8S347.1 104 256 104z' fill='white'/%3E%3Cpath d='M181 246c0-10 8-18 18-18h114c10 0 18 8 18 18s-8 18-18 18H199c-10 0-18-8-18-18zm0 58c0-10 8-18 18-18h72c10 0 18 8 18 18s-8 18-18 18h-72c-10 0-18-8-18-18z' fill='%2334C759'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%235BEA76'/%3E%3Cstop offset='1' stop-color='%2334C759'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='115' fill='url(%23g)'/%3E%3Cpath d='M256 104c-91.1 0-165 61.6-165 137.5 0 43.2 24.4 81.8 62.6 107.2L139 414l94.8-43.1c7.3.9 14.7 1.4 22.2 1.4 91.1 0 165-61.6 165-137.8S347.1 104 256 104z' fill='white'/%3E%3Cpath d='M181 246c0-10 8-18 18-18h114c10 0 18 8 18 18s-8 18-18 18H199c-10 0-18-8-18-18zm0 58c0-10 8-18 18-18h72c10 0 18 8 18 18s-8 18-18 18h-72c-10 0-18-8-18-18z' fill='%2334C759'/%3E%3C/svg%3E">
 
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
@@ -26,8 +24,6 @@
             --msg-sent-text: #ffffff;
             --msg-received-bg: #e9e9eb;
             --msg-received-text: #000000;
-            --msg-system-bg: transparent;
-            --msg-system-text: #8e8e93;
             --input-bg: #ffffff;
             --input-border: #dfdfdf;
             --input-text: #000000;
@@ -51,8 +47,6 @@
             --msg-sent-text: #ffffff;
             --msg-received-bg: #2c2c2e;
             --msg-received-text: #ffffff;
-            --msg-system-bg: transparent;
-            --msg-system-text: #8e8e93;
             --input-bg: #2c2c2e;
             --input-border: #3a3a3c;
             --input-text: #ffffff;
@@ -66,8 +60,15 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Text",
+                "SF Pro Icons",
+                "Helvetica Neue",
+                Helvetica,
+                Arial,
+                sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -114,7 +115,6 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            display: inline-block;
         }
 
         .dot-close {
@@ -167,7 +167,8 @@
             gap: 12px;
         }
 
-        .auth-box input {
+        .auth-box input,
+        .modal input {
             width: 100%;
             padding: 12px 14px;
             border: 1px solid var(--input-border);
@@ -178,7 +179,8 @@
             outline: none;
         }
 
-        .auth-box input:focus {
+        .auth-box input:focus,
+        .modal input:focus {
             border-color: var(--primary);
         }
 
@@ -343,8 +345,6 @@
         .sidebar-footer {
             padding: 12px;
             border-top: 1px solid var(--sidebar-border);
-            display: flex;
-            gap: 8px;
         }
 
         .chat-pane {
@@ -405,13 +405,6 @@
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .icon-button:hover {
-            opacity: 0.7;
         }
 
         #videoContainer {
@@ -431,6 +424,216 @@
             border-radius: 8px;
             object-fit: cover;
             background: #111;
+        }
+
+        /* =========================================================
+           FULL-SCREEN INCOMING CALL
+           ========================================================= */
+
+        #incomingCallScreen {
+            position: absolute;
+            inset: 32px 0 0 0;
+            z-index: 5000;
+
+            background:
+                radial-gradient(
+                    circle at 50% 22%,
+                    rgba(90, 90, 90, 0.45),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    180deg,
+                    #1a1a1a 0%,
+                    #090909 55%,
+                    #000000 100%
+                );
+
+            color: white;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 75px 24px 60px;
+
+            text-align: center;
+
+            animation:
+                incomingCallFadeIn
+                0.25s
+                ease-out;
+        }
+
+        #incomingCallScreen.hidden {
+            display: none !important;
+        }
+
+        @keyframes incomingCallFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(1.02);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .incoming-call-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .incoming-call-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.72);
+        }
+
+        .incoming-call-avatar {
+            width: 150px;
+            height: 150px;
+            margin-top: 38px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #707070,
+                    #292929
+                );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
+            font-size: 4.3rem;
+            font-weight: 500;
+
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.1),
+                0 15px 60px rgba(0,0,0,0.5);
+
+            animation:
+                avatarPulse
+                2.2s
+                infinite
+                ease-in-out;
+        }
+
+        @keyframes avatarPulse {
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow:
+                    0 0 0 1px rgba(255,255,255,0.1),
+                    0 15px 60px rgba(0,0,0,0.5);
+            }
+
+            50% {
+                transform: scale(1.025);
+                box-shadow:
+                    0 0 0 10px rgba(255,255,255,0.025),
+                    0 15px 65px rgba(0,0,0,0.6);
+            }
+        }
+
+        .incoming-call-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .incoming-call-name {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 500;
+            letter-spacing: -0.045em;
+            margin-top: 23px;
+            max-width: 90%;
+            word-break: break-word;
+        }
+
+        .incoming-call-name::after {
+            content: " is calling";
+        }
+
+        .incoming-call-type {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+        }
+
+        .incoming-call-actions {
+            width: 100%;
+            max-width: 430px;
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+
+            gap: 70px;
+        }
+
+        .incoming-call-action {
+            border: none;
+            cursor: pointer;
+
+            width: 78px;
+            height: 78px;
+
+            border-radius: 50%;
+
+            color: white;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            font-size: 0.8rem;
+            font-weight: 500;
+
+            transition:
+                transform 0.15s ease,
+                filter 0.15s ease;
+
+            box-shadow:
+                0 10px 35px rgba(0,0,0,0.4);
+        }
+
+        .incoming-call-action:hover {
+            transform: scale(1.08);
+            filter: brightness(1.08);
+        }
+
+        .incoming-call-action:active {
+            transform: scale(0.92);
+        }
+
+        .incoming-call-action.accept {
+            background: #34c759;
+        }
+
+        .incoming-call-action.decline {
+            background: #ff3b30;
+        }
+
+        .incoming-call-action-icon {
+            font-size: 1.7rem;
+            line-height: 1;
+        }
+
+        .incoming-call-action.accept
+        .incoming-call-action-icon {
+            transform: rotate(-10deg);
         }
 
         .messages-container {
@@ -474,11 +677,6 @@
             color: var(--text-secondary);
             margin-bottom: 2px;
             padding: 0 4px;
-            display: none;
-        }
-
-        .message-wrapper.received.show-sender .sender-tag {
-            display: block;
         }
 
         .bubble-container {
@@ -515,8 +713,8 @@
         }
 
         .bubble.system {
-            background: var(--msg-system-bg);
-            color: var(--msg-system-text);
+            background: transparent;
+            color: var(--text-secondary);
             font-size: 0.75rem;
             text-align: center;
             border-radius: 0;
@@ -564,7 +762,6 @@
             display: flex;
             gap: 2px;
             z-index: 2;
-            user-select: none;
         }
 
         .message-wrapper.sent .reaction-badge {
@@ -583,60 +780,6 @@
             border-top: 1px solid var(--sidebar-border);
             justify-content: space-between;
             align-items: center;
-        }
-
-        .context-menu {
-            position: absolute;
-            background: var(--container-bg);
-            border: 1px solid var(--sidebar-border);
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 6px;
-            z-index: 500;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            min-width: 160px;
-            backdrop-filter: blur(10px);
-        }
-
-        .context-menu-item {
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-color);
-        }
-
-        .context-menu-item:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .context-reactions-row {
-            display: flex;
-            justify-content: space-around;
-            padding: 4px 0;
-            border-bottom: 1px solid var(--sidebar-border);
-            margin-bottom: 4px;
-        }
-
-        .context-reaction-btn {
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 50%;
-            transition: transform 0.1s;
-        }
-
-        .context-reaction-btn:hover {
-            transform: scale(1.2);
-            background: var(--hover-bg);
         }
 
         .typing-bubble {
@@ -684,7 +827,7 @@
             }
 
             40% {
-                transform: scale(1.0);
+                transform: scale(1);
             }
         }
 
@@ -716,7 +859,6 @@
             font-size: 1.1rem;
             cursor: pointer;
             flex-shrink: 0;
-            font-weight: 300;
         }
 
         .plus-btn:hover {
@@ -727,9 +869,6 @@
 
         .input-wrapper {
             flex: 1;
-            position: relative;
-            display: flex;
-            align-items: center;
         }
 
         .input-wrapper input {
@@ -743,10 +882,6 @@
             font-size: 0.9rem;
         }
 
-        .input-wrapper input:focus {
-            border-color: var(--primary);
-        }
-
         .send-arrow-btn {
             width: 30px;
             height: 30px;
@@ -758,13 +893,6 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            font-size: 0.8rem;
-            flex-shrink: 0;
-            transition: opacity 0.2s;
-        }
-
-        .send-arrow-btn:hover {
-            opacity: 0.8;
         }
 
         .modal-overlay {
@@ -796,17 +924,6 @@
             font-weight: 600;
         }
 
-        .modal input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--input-border);
-            background: var(--input-bg);
-            color: var(--input-text);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            outline: none;
-        }
-
         .avatar-preview-box {
             width: 64px;
             height: 64px;
@@ -819,8 +936,6 @@
             font-weight: 600;
             font-size: 1.2rem;
             overflow: hidden;
-            border: 2px solid var(--primary);
-            flex-shrink: 0;
         }
 
         .avatar-preview-box img {
@@ -836,7 +951,6 @@
             padding: 8px 10px;
             border-radius: 8px;
             background: var(--hover-bg);
-            margin-bottom: 6px;
         }
 
         .user-info-left {
@@ -853,1034 +967,1261 @@
         #profilePicInput {
             display: none;
         }
+
+        .context-menu {
+            position: absolute;
+            background: var(--container-bg);
+            border: 1px solid var(--sidebar-border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 6px;
+            z-index: 500;
+            min-width: 160px;
+        }
+
+        .context-menu-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .context-menu-item:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .context-reactions-row {
+            display: flex;
+            justify-content: space-around;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--sidebar-border);
+            margin-bottom: 4px;
+        }
+
+        .context-reaction-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                align-items: stretch;
+            }
+
+            .mac-window {
+                height: 100vh;
+                max-width: none;
+                border-radius: 0;
+                border: none;
+            }
+
+            .mac-titlebar {
+                height: 28px;
+            }
+
+            #setupScreen {
+                inset: 28px 0 0 0;
+            }
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .incoming-call-avatar {
+                width: 125px;
+                height: 125px;
+            }
+
+            .incoming-call-name {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .sidebar {
+                display: none;
+            }
+
+            .incoming-call-actions {
+                gap: 65px;
+            }
+
+            .incoming-call-action {
+                width: 72px;
+                height: 72px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="mac-window">
+<div class="mac-window">
 
-        <div class="mac-titlebar">
-            <div class="traffic-lights">
-                <span class="traffic-dot dot-close"></span>
-                <span class="traffic-dot dot-minimize"></span>
-                <span class="traffic-dot dot-zoom"></span>
-            </div>
+    <div class="mac-titlebar">
+        <div class="traffic-lights">
+            <span class="traffic-dot dot-close"></span>
+            <span class="traffic-dot dot-minimize"></span>
+            <span class="traffic-dot dot-zoom"></span>
         </div>
-
-        <!-- Setup / Authentication Overlay -->
-        <div id="setupScreen">
-
-            <div>
-                <h1>Messages</h1>
-                <p>Sign in with your Apple ID or local profile</p>
-            </div>
-
-            <div class="auth-box" id="authBoxSection">
-
-                <input
-                    type="text"
-                    id="authUsername"
-                    placeholder="Apple ID / Username"
-                    autocomplete="off"
-                >
-
-                <input
-                    type="password"
-                    id="authPassword"
-                    placeholder="Password"
-                    autocomplete="off"
-                >
-
-                <button class="ios-btn" id="loginBtn">
-                    Sign In / Create Account
-                </button>
-
-            </div>
-
-            <div class="auth-box hidden" id="chatSelectorSection">
-
-                <div
-                    id="loggedInUserDisplay"
-                    style="font-weight: 500; font-size: 0.9rem; color: var(--text-secondary);"
-                ></div>
-
-                <button class="ios-btn" id="joinPublicBtn">
-                    Open Public Chat Lobby
-                </button>
-
-                <button
-                    class="ios-btn ios-btn-secondary"
-                    id="openPrivateOptionsBtn"
-                >
-                    Secure Private Room...
-                </button>
-
-                <button
-                    class="ios-btn ios-btn-secondary"
-                    id="logoutBtn"
-                    style="color:#ff3b30; border-color:#ff3b30;"
-                >
-                    Sign Out
-                </button>
-
-            </div>
-
-            <div class="auth-box hidden" id="privateCreationSection">
-
-                <button
-                    class="ios-btn"
-                    id="createPrivateBtn"
-                >
-                    Create New Secure Room
-                </button>
-
-                <input
-                    type="text"
-                    id="joinCodeInput"
-                    placeholder="Paste invitation code..."
-                    autocomplete="off"
-                >
-
-                <button
-                    class="ios-btn"
-                    id="joinPrivateBtn"
-                >
-                    Join Secure Room
-                </button>
-
-                <button
-                    class="ios-btn ios-btn-secondary"
-                    id="backToMenuBtn"
-                >
-                    Back
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- App Layout -->
-        <div class="app-layout">
-
-            <div class="sidebar">
-
-                <div class="sidebar-header">
-
-                    <div class="sidebar-top-row">
-
-                        <h2>Messages</h2>
-
-                        <button
-                            class="icon-button"
-                            id="sidebarProfileBtn"
-                            title="Account Settings"
-                        >
-                            👤
-                        </button>
-
-                    </div>
-
-                    <input
-                        type="text"
-                        class="sidebar-search"
-                        placeholder="Search"
-                    >
-
-                </div>
-
-                <div
-                    class="chat-list"
-                    id="chatListContainer"
-                >
-
-                    <div
-                        class="chat-list-item active"
-                        id="defaultChatTab"
-                    >
-
-                        <div class="list-avatar">
-                            💬
-                        </div>
-
-                        <div class="chat-list-info">
-
-                            <div class="chat-list-top">
-
-                                <span
-                                    class="chat-name"
-                                    id="sidebarRoomLabel"
-                                >
-                                    Public Chat
-                                </span>
-
-                                <span class="chat-time">
-                                    Now
-                                </span>
-
-                            </div>
-
-                            <div
-                                class="chat-preview"
-                                id="sidebarLastMsg"
-                            >
-                                Connected
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="sidebar-footer">
-
-                    <button
-                        class="ios-btn ios-btn-secondary"
-                        id="leaveConversationBtn"
-                        style="font-size: 0.8rem; padding: 8px;"
-                    >
-                        Switch Rooms / Home
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div class="chat-pane">
-
-                <div class="chat-header">
-
-                    <div class="chat-header-left">
-
-                        <div
-                            class="list-avatar"
-                            id="headerAvatar"
-                            style="width: 32px; height: 32px; font-size: 0.8rem;"
-                        >
-                            💬
-                        </div>
-
-                        <div class="chat-header-title">
-
-                            <span id="roomTitleDisplay">
-                                Messages
-                            </span>
-
-                            <span id="connectionStatus">
-                                Disconnected
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="chat-header-actions">
-
-                        <button
-                            class="icon-button hidden"
-                            id="hangUpBtn"
-                            style="color:#ff3b30; font-weight:600;"
-                        >
-                            End Call
-                        </button>
-
-                        <button
-                            class="icon-button"
-                            id="themeToggleBtn"
-                            title="Toggle Appearance"
-                        >
-                            🌓
-                        </button>
-
-                        <button
-                            class="icon-button"
-                            id="infoBtn"
-                            title="Participants / Details"
-                            style="border: 1px solid var(--sidebar-border); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;"
-                        >
-                            ℹ
-                        </button>
-
-                    </div>
-
-                </div>
-
-                <div id="videoContainer">
-
-                    <video
-                        id="localVideo"
-                        autoplay
-                        muted
-                        playsinline
-                    ></video>
-
-                    <video
-                        id="remoteVideo"
-                        autoplay
-                        playsinline
-                    ></video>
-
-                </div>
-
-                <div
-                    class="messages-container"
-                    id="messagesBox"
-                >
-
-                    <div class="date-divider">
-                        Today
-                    </div>
-
-                    <div class="message-row system">
-
-                        <div class="bubble system">
-                            Welcome to Apple Messages web client.
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div
-                    class="typing-bubble hidden"
-                    id="typingBubble"
-                >
-
-                    <span id="typingSenderName">
-                        Someone
-                    </span>
-
-                    is typing
-
-                    <div class="typing-dots-box">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-
-                </div>
-
-                <div class="input-bar-container">
-
-                    <div id="replyBanner">
-
-                        <span
-                            id="replyBannerText"
-                            style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-                        >
-                            Replying to message
-                        </span>
-
-                        <button
-                            class="icon-button"
-                            id="cancelReplyBtn"
-                            style="font-size:0.75rem; font-weight:700;"
-                        >
-                            ✕
-                        </button>
-
-                    </div>
-
-                    <form
-                        class="input-bar"
-                        id="chatForm"
-                    >
-
-                        <div
-                            id="emojiPickerPopup"
-                            class="context-menu hidden"
-                            style="bottom: 60px; left: 16px; width: 220px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 8px;"
-                        >
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >😀</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >😂</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >😍</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >👍</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >🔥</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >🎉</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >❤️</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >😎</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >😢</button>
-
-                            <button
-                                class="context-reaction-btn"
-                                type="button"
-                            >✨</button>
-
-                        </div>
-
-                        <input
-                            type="file"
-                            id="fileInput"
-                        >
-
-                        <button
-                            type="button"
-                            class="plus-btn"
-                            id="fileBtn"
-                            title="Send Attachment"
-                        >
-                            +
-                        </button>
-
-                        <button
-                            type="button"
-                            class="plus-btn"
-                            id="emojiBtn"
-                            title="Emojis"
-                        >
-                            😊
-                        </button>
-
-                        <div class="input-wrapper">
-
-                            <input
-                                type="text"
-                                id="messageInput"
-                                placeholder="iMessage"
-                                autocomplete="off"
-                            >
-
-                        </div>
-
-                        <button
-                            type="submit"
-                            class="send-arrow-btn"
-                            title="Send"
-                        >
-                            ⬆
-                        </button>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-
     </div>
 
-    <!-- Context Menu -->
-    <div
-        id="bubbleContextMenu"
-        class="context-menu hidden"
-    >
+    <!-- SETUP -->
 
-        <div class="context-reactions-row">
+    <div id="setupScreen">
 
-            <button
-                class="context-reaction-btn"
-                data-reaction="❤️"
-            >❤️</button>
+        <div>
+            <h1>Messages</h1>
+            <p>Sign in with your Apple ID or local profile</p>
+        </div>
 
-            <button
-                class="context-reaction-btn"
-                data-reaction="👍"
-            >👍</button>
+        <div class="auth-box" id="authBoxSection">
 
-            <button
-                class="context-reaction-btn"
-                data-reaction="👎"
-            >👎</button>
+            <input
+                type="text"
+                id="authUsername"
+                placeholder="Apple ID / Username"
+                autocomplete="off"
+            >
 
-            <button
-                class="context-reaction-btn"
-                data-reaction="😂"
-            >😂</button>
+            <input
+                type="password"
+                id="authPassword"
+                placeholder="Password"
+                autocomplete="off"
+            >
 
-            <button
-                class="context-reaction-btn"
-                data-reaction="❗"
-            >❗</button>
+            <button class="ios-btn" id="loginBtn">
+                Sign In / Create Account
+            </button>
 
         </div>
 
         <div
-            class="context-menu-item"
-            id="ctxMenuReply"
+            class="auth-box hidden"
+            id="chatSelectorSection"
         >
-            ↩ Reply
-        </div>
-
-        <div
-            class="context-menu-item"
-            id="ctxMenuSender"
-        >
-            👤 Show Sender Info
-        </div>
-
-    </div>
-
-    <!-- Profile Edit Modal -->
-    <div
-        class="modal-overlay hidden"
-        id="profileModal"
-    >
-
-        <div class="modal">
-
-            <h3>
-                Apple ID Profile
-            </h3>
 
             <div
-                style="display: flex; align-items: center; gap: 14px;"
-            >
-
-                <div
-                    class="avatar-preview-box"
-                    id="modalAvatarPreview"
-                >
-                    👤
-                </div>
-
-                <div>
-
-                    <input
-                        type="file"
-                        id="profilePicInput"
-                        accept="image/*"
-                    >
-
-                    <button
-                        class="ios-btn ios-btn-secondary"
-                        type="button"
-                        id="uploadAvatarBtn"
-                        style="font-size: 0.8rem; padding: 6px 12px;"
-                    >
-                        Edit Photo
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div>
-
-                <label
-                    style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;"
-                >
-                    Display Name
-                </label>
-
-                <input
-                    type="text"
-                    id="modalDisplayNameInput"
-                    autocomplete="off"
-                >
-
-            </div>
-
-            <div
-                style="display: flex; gap: 8px; margin-top: 4px;"
-            >
-
-                <button
-                    class="ios-btn"
-                    id="saveProfileBtn"
-                >
-                    Done
-                </button>
-
-                <button
-                    class="ios-btn ios-btn-secondary"
-                    id="closeProfileModalBtn"
-                >
-                    Cancel
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Info / Participants Modal -->
-    <div
-        class="modal-overlay hidden"
-        id="infoModal"
-    >
-
-        <div class="modal">
-
-            <h3>
-                Conversation Details
-            </h3>
-
-            <p
-                style="font-size: 0.85rem; color: var(--text-secondary);"
-            >
-                Active Participants Online:
-            </p>
-
-            <div
-                id="participantsListContainer"
-                style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;"
+                id="loggedInUserDisplay"
+                style="font-weight:500;color:var(--text-secondary);"
             ></div>
 
             <button
-                class="ios-btn ios-btn-secondary"
-                id="closeInfoModalBtn"
+                class="ios-btn"
+                id="joinPublicBtn"
             >
-                Close
+                Open Public Chat Lobby
+            </button>
+
+            <button
+                class="ios-btn ios-btn-secondary"
+                id="openPrivateOptionsBtn"
+            >
+                Secure Private Room...
+            </button>
+
+            <button
+                class="ios-btn ios-btn-secondary"
+                id="logoutBtn"
+                style="color:#ff3b30;"
+            >
+                Sign Out
+            </button>
+
+        </div>
+
+        <div
+            class="auth-box hidden"
+            id="privateCreationSection"
+        >
+
+            <button
+                class="ios-btn"
+                id="createPrivateBtn"
+            >
+                Create New Secure Room
+            </button>
+
+            <input
+                type="text"
+                id="joinCodeInput"
+                placeholder="Paste invitation code..."
+                autocomplete="off"
+            >
+
+            <button
+                class="ios-btn"
+                id="joinPrivateBtn"
+            >
+                Join Secure Room
+            </button>
+
+            <button
+                class="ios-btn ios-btn-secondary"
+                id="backToMenuBtn"
+            >
+                Back
             </button>
 
         </div>
 
     </div>
 
-    <script>
+    <!-- APP -->
 
-        let peer = null;
+    <div class="app-layout">
 
-        let currentUser = {
-            username: '',
-            displayName: '',
-            avatar: '',
-            password: ''
-        };
+        <div class="sidebar">
 
-        let isHost = false;
-        let connections = [];
-        let hostConnection = null;
-        let onlineUsersMap = new Map();
-        let messageLog = [];
-        let currentCall = null;
-        let localStream = null;
-        let activeReplyingMessage = null;
-        let contextTargetMessageId = null;
+            <div class="sidebar-header">
 
-        const PUBLIC_ROOM_PREFIX =
-            'xchat_apple_messages_2026';
+                <div class="sidebar-top-row">
 
-        const peerConfig = {
-            config: {
-                'iceServers': [
-                    {
-                        urls: 'stun:stun.l.google.com:19302'
-                    },
-                    {
-                        urls: 'stun:stun1.l.google.com:19302'
-                    }
-                ]
-            }
-        };
+                    <h2>Messages</h2>
 
-        const setupScreen =
-            document.getElementById('setupScreen');
+                    <button
+                        class="icon-button"
+                        id="sidebarProfileBtn"
+                    >
+                        👤
+                    </button>
 
-        const authBoxSection =
-            document.getElementById('authBoxSection');
+                </div>
 
-        const chatSelectorSection =
-            document.getElementById('chatSelectorSection');
+                <input
+                    class="sidebar-search"
+                    placeholder="Search"
+                >
 
-        const privateCreationSection =
-            document.getElementById('privateCreationSection');
+            </div>
 
-        const authUsername =
-            document.getElementById('authUsername');
+            <div
+                class="chat-list"
+                id="chatListContainer"
+            >
 
-        const authPassword =
-            document.getElementById('authPassword');
+                <div
+                    class="chat-list-item active"
+                    id="defaultChatTab"
+                >
 
-        const loginBtn =
-            document.getElementById('loginBtn');
+                    <div class="list-avatar">
+                        💬
+                    </div>
 
-        const loggedInUserDisplay =
-            document.getElementById('loggedInUserDisplay');
+                    <div class="chat-list-info">
 
-        const logoutBtn =
-            document.getElementById('logoutBtn');
+                        <div class="chat-list-top">
 
-        const joinPublicBtn =
-            document.getElementById('joinPublicBtn');
+                            <span
+                                class="chat-name"
+                                id="sidebarRoomLabel"
+                            >
+                                Public Chat
+                            </span>
 
-        const openPrivateOptionsBtn =
-            document.getElementById('openPrivateOptionsBtn');
+                            <span class="chat-time">
+                                Now
+                            </span>
 
-        const createPrivateBtn =
-            document.getElementById('createPrivateBtn');
+                        </div>
 
-        const joinCodeInput =
-            document.getElementById('joinCodeInput');
+                        <div
+                            class="chat-preview"
+                            id="sidebarLastMsg"
+                        >
+                            Connected
+                        </div>
 
-        const joinPrivateBtn =
-            document.getElementById('joinPrivateBtn');
+                    </div>
 
-        const backToMenuBtn =
-            document.getElementById('backToMenuBtn');
+                </div>
 
-        const leaveConversationBtn =
-            document.getElementById('leaveConversationBtn');
+            </div>
 
-        const roomTitleDisplay =
-            document.getElementById('roomTitleDisplay');
+            <div class="sidebar-footer">
 
-        const sidebarRoomLabel =
-            document.getElementById('sidebarRoomLabel');
+                <button
+                    class="ios-btn ios-btn-secondary"
+                    id="leaveConversationBtn"
+                    style="font-size:.8rem;padding:8px;"
+                >
+                    Switch Rooms / Home
+                </button>
 
-        const sidebarLastMsg =
-            document.getElementById('sidebarLastMsg');
+            </div>
 
-        const connectionStatus =
-            document.getElementById('connectionStatus');
+        </div>
 
-        const messagesBox =
-            document.getElementById('messagesBox');
+        <div class="chat-pane">
 
-        const chatForm =
-            document.getElementById('chatForm');
+            <div class="chat-header">
 
-        const messageInput =
-            document.getElementById('messageInput');
+                <div class="chat-header-left">
 
-        const themeToggleBtn =
-            document.getElementById('themeToggleBtn');
+                    <div
+                        class="list-avatar"
+                        id="headerAvatar"
+                        style="width:32px;height:32px;font-size:.8rem;"
+                    >
+                        💬
+                    </div>
 
-        const typingBubble =
-            document.getElementById('typingBubble');
+                    <div class="chat-header-title">
 
-        const typingSenderName =
-            document.getElementById('typingSenderName');
+                        <span id="roomTitleDisplay">
+                            Messages
+                        </span>
 
-        const fileBtn =
-            document.getElementById('fileBtn');
+                        <span id="connectionStatus">
+                            Disconnected
+                        </span>
 
-        const fileInput =
-            document.getElementById('fileInput');
+                    </div>
 
-        const videoContainer =
-            document.getElementById('videoContainer');
+                </div>
 
-        const localVideo =
-            document.getElementById('localVideo');
+                <div class="chat-header-actions">
 
-        const remoteVideo =
-            document.getElementById('remoteVideo');
+                    <button
+                        class="icon-button hidden"
+                        id="hangUpBtn"
+                        style="color:#ff3b30;"
+                    >
+                        End Call
+                    </button>
 
-        const hangUpBtn =
-            document.getElementById('hangUpBtn');
+                    <button
+                        class="icon-button"
+                        id="themeToggleBtn"
+                    >
+                        🌓
+                    </button>
 
-        const sidebarProfileBtn =
-            document.getElementById('sidebarProfileBtn');
+                    <button
+                        class="icon-button"
+                        id="infoBtn"
+                    >
+                        ℹ
+                    </button>
 
-        const profileModal =
-            document.getElementById('profileModal');
+                </div>
 
-        const modalAvatarPreview =
-            document.getElementById('modalAvatarPreview');
+            </div>
 
-        const profilePicInput =
-            document.getElementById('profilePicInput');
+            <div id="videoContainer">
 
-        const uploadAvatarBtn =
-            document.getElementById('uploadAvatarBtn');
+                <video
+                    id="localVideo"
+                    autoplay
+                    muted
+                    playsinline
+                ></video>
 
-        const modalDisplayNameInput =
-            document.getElementById('modalDisplayNameInput');
+                <video
+                    id="remoteVideo"
+                    autoplay
+                    playsinline
+                ></video>
 
-        const saveProfileBtn =
-            document.getElementById('saveProfileBtn');
+            </div>
 
-        const closeProfileModalBtn =
-            document.getElementById('closeProfileModalBtn');
+            <div
+                class="messages-container"
+                id="messagesBox"
+            >
 
-        const infoBtn =
-            document.getElementById('infoBtn');
+                <div class="date-divider">
+                    Today
+                </div>
 
-        const infoModal =
-            document.getElementById('infoModal');
+                <div class="message-wrapper system">
 
-        const closeInfoModalBtn =
-            document.getElementById('closeInfoModalBtn');
+                    <div class="bubble system">
+                        Welcome to Apple Messages web client.
+                    </div>
 
-        const participantsListContainer =
-            document.getElementById(
-                'participantsListContainer'
-            );
+                </div>
 
-        const bubbleContextMenu =
-            document.getElementById(
-                'bubbleContextMenu'
-            );
+            </div>
 
-        const ctxMenuReply =
-            document.getElementById(
-                'ctxMenuReply'
-            );
+            <div
+                class="typing-bubble hidden"
+                id="typingBubble"
+            >
 
-        const ctxMenuSender =
-            document.getElementById(
-                'ctxMenuSender'
-            );
+                <span id="typingSenderName">
+                    Someone
+                </span>
 
-        const replyBanner =
-            document.getElementById(
-                'replyBanner'
-            );
+                is typing
 
-        const replyBannerText =
-            document.getElementById(
-                'replyBannerText'
-            );
+                <div class="typing-dots-box">
 
-        const cancelReplyBtn =
-            document.getElementById(
-                'cancelReplyBtn'
-            );
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
 
-        const emojiBtn =
-            document.getElementById(
-                'emojiBtn'
-            );
+                </div>
 
-        const emojiPickerPopup =
-            document.getElementById(
-                'emojiPickerPopup'
-            );
+            </div>
 
+            <div class="input-bar-container">
 
-        window.addEventListener(
-            'DOMContentLoaded',
-            () => {
+                <div id="replyBanner">
 
-                const savedSession =
-                    localStorage.getItem(
-                        'xchat_current_user'
-                    );
+                    <span id="replyBannerText">
+                        Replying to message
+                    </span>
 
-                if (savedSession) {
+                    <button
+                        class="icon-button"
+                        id="cancelReplyBtn"
+                    >
+                        ✕
+                    </button>
 
-                    currentUser =
-                        JSON.parse(
-                            savedSession
-                        );
+                </div>
 
-                    enterLoggedInState();
+                <form
+                    class="input-bar"
+                    id="chatForm"
+                >
 
+                    <input
+                        type="file"
+                        id="fileInput"
+                    >
+
+                    <button
+                        type="button"
+                        class="plus-btn"
+                        id="fileBtn"
+                    >
+                        +
+                    </button>
+
+                    <button
+                        type="button"
+                        class="plus-btn"
+                        id="emojiBtn"
+                    >
+                        😊
+                    </button>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="text"
+                            id="messageInput"
+                            placeholder="iMessage"
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="send-arrow-btn"
+                    >
+                        ⬆
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         INCOMING CALL SCREEN
+
+         The name is inserted into #incomingCallName.
+         CSS then adds " is calling".
+         Example:
+         caller = Joe
+         screen = "Joe is calling"
+         ========================================================= -->
+
+    <div
+        id="incomingCallScreen"
+        class="hidden"
+    >
+
+        <div class="incoming-call-top">
+
+            <div class="incoming-call-label">
+                Incoming video call
+            </div>
+
+            <div
+                class="incoming-call-avatar"
+                id="incomingCallAvatar"
+            >
+                👤
+            </div>
+
+            <div
+                class="incoming-call-name"
+                id="incomingCallName"
+            >
+                Someone
+            </div>
+
+            <div class="incoming-call-type">
+                FaceTime video
+            </div>
+
+        </div>
+
+        <div class="incoming-call-actions">
+
+            <button
+                class="incoming-call-action decline"
+                id="declineCallBtn"
+                type="button"
+            >
+
+                <span class="incoming-call-action-icon">
+                    ☎
+                </span>
+
+                <span>
+                    Decline
+                </span>
+
+            </button>
+
+            <button
+                class="incoming-call-action accept"
+                id="acceptCallBtn"
+                type="button"
+            >
+
+                <span class="incoming-call-action-icon">
+                    ☎
+                </span>
+
+                <span>
+                    Accept
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CONTEXT MENU -->
+
+<div
+    id="bubbleContextMenu"
+    class="context-menu hidden"
+>
+
+    <div class="context-reactions-row">
+
+        <button
+            class="context-reaction-btn"
+            data-reaction="❤️"
+        >
+            ❤️
+        </button>
+
+        <button
+            class="context-reaction-btn"
+            data-reaction="👍"
+        >
+            👍
+        </button>
+
+        <button
+            class="context-reaction-btn"
+            data-reaction="👎"
+        >
+            👎
+        </button>
+
+        <button
+            class="context-reaction-btn"
+            data-reaction="😂"
+        >
+            😂
+        </button>
+
+        <button
+            class="context-reaction-btn"
+            data-reaction="❗"
+        >
+            ❗
+        </button>
+
+    </div>
+
+    <div
+        class="context-menu-item"
+        id="ctxMenuReply"
+    >
+        ↩ Reply
+    </div>
+
+    <div
+        class="context-menu-item"
+        id="ctxMenuSender"
+    >
+        👤 Show Sender Info
+    </div>
+
+</div>
+
+<!-- PROFILE MODAL -->
+
+<div
+    class="modal-overlay hidden"
+    id="profileModal"
+>
+
+    <div class="modal">
+
+        <h3>
+            Apple ID Profile
+        </h3>
+
+        <div
+            style="display:flex;align-items:center;gap:14px;"
+        >
+
+            <div
+                class="avatar-preview-box"
+                id="modalAvatarPreview"
+            >
+                👤
+            </div>
+
+            <div>
+
+                <input
+                    type="file"
+                    id="profilePicInput"
+                    accept="image/*"
+                >
+
+                <button
+                    class="ios-btn ios-btn-secondary"
+                    type="button"
+                    id="uploadAvatarBtn"
+                    style="font-size:.8rem;padding:6px 12px;"
+                >
+                    Edit Photo
+                </button>
+
+            </div>
+
+        </div>
+
+        <div>
+
+            <label
+                style="font-size:.75rem;color:var(--text-secondary);"
+            >
+                Display Name
+            </label>
+
+            <input
+                type="text"
+                id="modalDisplayNameInput"
+            >
+
+        </div>
+
+        <div
+            style="display:flex;gap:8px;"
+        >
+
+            <button
+                class="ios-btn"
+                id="saveProfileBtn"
+            >
+                Done
+            </button>
+
+            <button
+                class="ios-btn ios-btn-secondary"
+                id="closeProfileModalBtn"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- INFO MODAL -->
+
+<div
+    class="modal-overlay hidden"
+    id="infoModal"
+>
+
+    <div class="modal">
+
+        <h3>
+            Conversation Details
+        </h3>
+
+        <p
+            style="font-size:.85rem;color:var(--text-secondary);"
+        >
+            Active Participants Online:
+        </p>
+
+        <div
+            id="participantsListContainer"
+            style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"
+        ></div>
+
+        <button
+            class="ios-btn ios-btn-secondary"
+            id="closeInfoModalBtn"
+        >
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+    let peer = null;
+
+    let currentUser = {
+        username: '',
+        displayName: '',
+        avatar: '',
+        password: ''
+    };
+
+    let isHost = false;
+    let connections = [];
+    let hostConnection = null;
+    let onlineUsersMap = new Map();
+    let messageLog = [];
+
+    let currentCall = null;
+    let localStream = null;
+
+    let incomingCall = null;
+    let incomingCallerProfile = null;
+
+    let activeReplyingMessage = null;
+    let contextTargetMessageId = null;
+
+    const PUBLIC_ROOM_PREFIX =
+        'xchat_apple_messages_2026';
+
+    const peerConfig = {
+        config: {
+            iceServers: [
+                {
+                    urls:
+                        'stun:stun.l.google.com:19302'
+                },
+                {
+                    urls:
+                        'stun:stun1.l.google.com:19302'
                 }
+            ]
+        }
+    };
 
-                requestNotificationPermission();
+    const setupScreen =
+        document.getElementById(
+            'setupScreen'
+        );
 
-            }
+    const authBoxSection =
+        document.getElementById(
+            'authBoxSection'
+        );
+
+    const chatSelectorSection =
+        document.getElementById(
+            'chatSelectorSection'
+        );
+
+    const privateCreationSection =
+        document.getElementById(
+            'privateCreationSection'
+        );
+
+    const authUsername =
+        document.getElementById(
+            'authUsername'
+        );
+
+    const authPassword =
+        document.getElementById(
+            'authPassword'
+        );
+
+    const loginBtn =
+        document.getElementById(
+            'loginBtn'
+        );
+
+    const loggedInUserDisplay =
+        document.getElementById(
+            'loggedInUserDisplay'
+        );
+
+    const logoutBtn =
+        document.getElementById(
+            'logoutBtn'
+        );
+
+    const joinPublicBtn =
+        document.getElementById(
+            'joinPublicBtn'
+        );
+
+    const openPrivateOptionsBtn =
+        document.getElementById(
+            'openPrivateOptionsBtn'
+        );
+
+    const createPrivateBtn =
+        document.getElementById(
+            'createPrivateBtn'
+        );
+
+    const joinCodeInput =
+        document.getElementById(
+            'joinCodeInput'
+        );
+
+    const joinPrivateBtn =
+        document.getElementById(
+            'joinPrivateBtn'
+        );
+
+    const backToMenuBtn =
+        document.getElementById(
+            'backToMenuBtn'
+        );
+
+    const leaveConversationBtn =
+        document.getElementById(
+            'leaveConversationBtn'
+        );
+
+    const roomTitleDisplay =
+        document.getElementById(
+            'roomTitleDisplay'
+        );
+
+    const sidebarRoomLabel =
+        document.getElementById(
+            'sidebarRoomLabel'
+        );
+
+    const sidebarLastMsg =
+        document.getElementById(
+            'sidebarLastMsg'
+        );
+
+    const connectionStatus =
+        document.getElementById(
+            'connectionStatus'
+        );
+
+    const messagesBox =
+        document.getElementById(
+            'messagesBox'
+        );
+
+    const chatForm =
+        document.getElementById(
+            'chatForm'
+        );
+
+    const messageInput =
+        document.getElementById(
+            'messageInput'
+        );
+
+    const themeToggleBtn =
+        document.getElementById(
+            'themeToggleBtn'
+        );
+
+    const typingBubble =
+        document.getElementById(
+            'typingBubble'
+        );
+
+    const typingSenderName =
+        document.getElementById(
+            'typingSenderName'
+        );
+
+    const fileBtn =
+        document.getElementById(
+            'fileBtn'
+        );
+
+    const fileInput =
+        document.getElementById(
+            'fileInput'
+        );
+
+    const videoContainer =
+        document.getElementById(
+            'videoContainer'
+        );
+
+    const localVideo =
+        document.getElementById(
+            'localVideo'
+        );
+
+    const remoteVideo =
+        document.getElementById(
+            'remoteVideo'
+        );
+
+    const hangUpBtn =
+        document.getElementById(
+            'hangUpBtn'
+        );
+
+    const sidebarProfileBtn =
+        document.getElementById(
+            'sidebarProfileBtn'
+        );
+
+    const profileModal =
+        document.getElementById(
+            'profileModal'
+        );
+
+    const modalAvatarPreview =
+        document.getElementById(
+            'modalAvatarPreview'
+        );
+
+    const profilePicInput =
+        document.getElementById(
+            'profilePicInput'
+        );
+
+    const uploadAvatarBtn =
+        document.getElementById(
+            'uploadAvatarBtn'
+        );
+
+    const modalDisplayNameInput =
+        document.getElementById(
+            'modalDisplayNameInput'
+        );
+
+    const saveProfileBtn =
+        document.getElementById(
+            'saveProfileBtn'
+        );
+
+    const closeProfileModalBtn =
+        document.getElementById(
+            'closeProfileModalBtn'
+        );
+
+    const infoBtn =
+        document.getElementById(
+            'infoBtn'
+        );
+
+    const infoModal =
+        document.getElementById(
+            'infoModal'
+        );
+
+    const closeInfoModalBtn =
+        document.getElementById(
+            'closeInfoModalBtn'
+        );
+
+    const participantsListContainer =
+        document.getElementById(
+            'participantsListContainer'
+        );
+
+    const bubbleContextMenu =
+        document.getElementById(
+            'bubbleContextMenu'
+        );
+
+    const ctxMenuReply =
+        document.getElementById(
+            'ctxMenuReply'
+        );
+
+    const ctxMenuSender =
+        document.getElementById(
+            'ctxMenuSender'
+        );
+
+    const replyBanner =
+        document.getElementById(
+            'replyBanner'
+        );
+
+    const replyBannerText =
+        document.getElementById(
+            'replyBannerText'
+        );
+
+    const cancelReplyBtn =
+        document.getElementById(
+            'cancelReplyBtn'
+        );
+
+    const emojiBtn =
+        document.getElementById(
+            'emojiBtn'
+        );
+
+    const incomingCallScreen =
+        document.getElementById(
+            'incomingCallScreen'
+        );
+
+    const incomingCallAvatar =
+        document.getElementById(
+            'incomingCallAvatar'
+        );
+
+    const incomingCallName =
+        document.getElementById(
+            'incomingCallName'
+        );
+
+    const acceptCallBtn =
+        document.getElementById(
+            'acceptCallBtn'
+        );
+
+    const declineCallBtn =
+        document.getElementById(
+            'declineCallBtn'
         );
 
 
-        function requestNotificationPermission() {
+    /*
+     * =========================================================
+     * LOGIN
+     * =========================================================
+     */
 
-            if (
-                'Notification' in window &&
-                Notification.permission !== 'granted'
-            ) {
+    window.addEventListener(
+        'DOMContentLoaded',
+        () => {
 
-                Notification.requestPermission();
+            const saved =
+                localStorage.getItem(
+                    'xchat_current_user'
+                );
+
+            if (saved) {
+
+                try {
+
+                    currentUser =
+                        JSON.parse(saved);
+
+                    enterLoggedInState();
+
+                } catch {
+
+                    localStorage.removeItem(
+                        'xchat_current_user'
+                    );
+
+                }
 
             }
 
         }
+    );
 
 
-        window.addEventListener(
-            'click',
-            () => {
+    loginBtn.addEventListener(
+        'click',
+        () => {
 
-                bubbleContextMenu.classList.add(
-                    'hidden'
+            const username =
+                authUsername.value
+                    .trim()
+                    .toLowerCase();
+
+            const password =
+                authPassword.value.trim();
+
+            if (
+                !username ||
+                !password
+            ) {
+
+                alert(
+                    'Enter username and password.'
                 );
 
-                emojiPickerPopup.classList.add(
-                    'hidden'
+                return;
+
+            }
+
+            const key =
+                'xchat_acc_' +
+                username;
+
+            const existing =
+                localStorage.getItem(
+                    key
                 );
 
-            }
-        );
+            if (existing) {
 
+                const account =
+                    JSON.parse(existing);
 
-        window.addEventListener(
-            'beforeunload',
-            () => {
-
-                if (localStream) {
-
-                    localStream
-                        .getTracks()
-                        .forEach(
-                            track =>
-                                track.stop()
-                        );
-
-                }
-
-                if (peer) {
-                    peer.destroy();
-                }
-
-            }
-        );
-
-
-        loginBtn.addEventListener(
-            'click',
-            () => {
-
-                const uName =
-                    authUsername.value
-                        .trim()
-                        .toLowerCase();
-
-                const pass =
-                    authPassword.value.trim();
-
-                if (!uName || !pass) {
+                if (
+                    account.password !==
+                    password
+                ) {
 
                     alert(
-                        'Enter username & password.'
+                        'Incorrect password.'
                     );
 
                     return;
 
                 }
 
-                const savedAcc =
-                    localStorage.getItem(
-                        'xchat_acc_' + uName
-                    );
+                currentUser =
+                    account;
 
-                if (savedAcc) {
+            } else {
 
-                    const acc =
-                        JSON.parse(
-                            savedAcc
-                        );
+                currentUser = {
 
-                    if (
-                        acc.password !== pass
-                    ) {
+                    username,
 
-                        alert(
-                            'Incorrect password.'
-                        );
+                    displayName:
+                        authUsername.value
+                            .trim(),
 
-                        return;
+                    password,
 
-                    }
+                    avatar: ''
 
-                    currentUser = acc;
-
-                } else {
-
-                    currentUser = {
-
-                        username: uName,
-
-                        displayName:
-                            authUsername.value.trim(),
-
-                        password: pass,
-
-                        avatar: ''
-
-                    };
-
-                    localStorage.setItem(
-                        'xchat_acc_' + uName,
-                        JSON.stringify(
-                            currentUser
-                        )
-                    );
-
-                }
+                };
 
                 localStorage.setItem(
-                    'xchat_current_user',
+                    key,
                     JSON.stringify(
                         currentUser
                     )
                 );
 
-                enterLoggedInState();
-
             }
+
+            localStorage.setItem(
+                'xchat_current_user',
+                JSON.stringify(
+                    currentUser
+                )
+            );
+
+            enterLoggedInState();
+
+        }
+    );
+
+
+    function enterLoggedInState() {
+
+        authBoxSection.classList.add(
+            'hidden'
         );
 
-
-        logoutBtn.addEventListener(
-            'click',
-            () => {
-
-                localStorage.removeItem(
-                    'xchat_current_user'
-                );
-
-                currentUser = {
-
-                    username: '',
-                    displayName: '',
-                    avatar: '',
-                    password: ''
-
-                };
-
-                chatSelectorSection.classList.add(
-                    'hidden'
-                );
-
-                privateCreationSection.classList.add(
-                    'hidden'
-                );
-
-                authBoxSection.classList.remove(
-                    'hidden'
-                );
-
-                authUsername.value = '';
-                authPassword.value = '';
-
-            }
+        privateCreationSection.classList.add(
+            'hidden'
         );
 
+        chatSelectorSection.classList.remove(
+            'hidden'
+        );
 
-        function enterLoggedInState() {
+        loggedInUserDisplay.innerText =
+            `Signed in as ${currentUser.displayName}`;
 
-            authBoxSection.classList.add(
+        updateUserAvatarUI();
+
+    }
+
+
+    function updateUserAvatarUI() {
+
+        if (currentUser.avatar) {
+
+            sidebarProfileBtn.innerHTML =
+                `<img src="${currentUser.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+
+        } else {
+
+            sidebarProfileBtn.innerText =
+                currentUser.displayName
+                    ? currentUser.displayName
+                        .charAt(0)
+                        .toUpperCase()
+                    : '👤';
+
+        }
+
+    }
+
+
+    logoutBtn.addEventListener(
+        'click',
+        () => {
+
+            executeCleanUp();
+
+            localStorage.removeItem(
+                'xchat_current_user'
+            );
+
+            currentUser = {
+                username: '',
+                displayName: '',
+                avatar: '',
+                password: ''
+            };
+
+            authUsername.value = '';
+            authPassword.value = '';
+
+            chatSelectorSection.classList.add(
                 'hidden'
             );
 
@@ -1888,28 +2229,38 @@
                 'hidden'
             );
 
-            chatSelectorSection.classList.remove(
+            authBoxSection.classList.remove(
                 'hidden'
             );
 
-            loggedInUserDisplay.innerText =
-                `Signed in as ${currentUser.displayName}`;
-
-            updateUserAvatarUI();
+            setupScreen.style.display =
+                'flex';
 
         }
+    );
 
 
-        function updateUserAvatarUI() {
+    /*
+     * =========================================================
+     * PROFILE
+     * =========================================================
+     */
+
+    sidebarProfileBtn.addEventListener(
+        'click',
+        () => {
+
+            modalDisplayNameInput.value =
+                currentUser.displayName;
 
             if (currentUser.avatar) {
 
-                sidebarProfileBtn.innerHTML =
-                    `<img src="${currentUser.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                modalAvatarPreview.innerHTML =
+                    `<img src="${currentUser.avatar}">`;
 
             } else {
 
-                sidebarProfileBtn.innerText =
+                modalAvatarPreview.innerText =
                     currentUser.displayName
                         ? currentUser.displayName
                             .charAt(0)
@@ -1918,316 +2269,192 @@
 
             }
 
-        }
-
-
-        sidebarProfileBtn.addEventListener(
-            'click',
-            () => {
-
-                if (!currentUser.username) {
-
-                    alert(
-                        'Sign in first.'
-                    );
-
-                    return;
-
-                }
-
-                modalDisplayNameInput.value =
-                    currentUser.displayName;
-
-                if (currentUser.avatar) {
-
-                    modalAvatarPreview.innerHTML =
-                        `<img src="${currentUser.avatar}">`;
-
-                } else {
-
-                    modalAvatarPreview.innerText =
-                        currentUser.displayName
-                            ? currentUser.displayName
-                                .charAt(0)
-                                .toUpperCase()
-                            : '👤';
-
-                }
-
-                profileModal.classList.remove(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        closeProfileModalBtn.addEventListener(
-            'click',
-            () =>
-                profileModal.classList.add(
-                    'hidden'
-                )
-        );
-
-
-        uploadAvatarBtn.addEventListener(
-            'click',
-            () =>
-                profilePicInput.click()
-        );
-
-
-        profilePicInput.addEventListener(
-            'change',
-            (e) => {
-
-                const file =
-                    e.target.files[0];
-
-                if (!file) return;
-
-                const reader =
-                    new FileReader();
-
-                reader.onload =
-                    (evt) => {
-
-                        modalAvatarPreview.innerHTML =
-                            `<img src="${evt.target.result}">`;
-
-                        modalAvatarPreview.dataset.tempAvatar =
-                            evt.target.result;
-
-                    };
-
-                reader.readAsDataURL(
-                    file
-                );
-
-            }
-        );
-
-
-        saveProfileBtn.addEventListener(
-            'click',
-            () => {
-
-                const newName =
-                    modalDisplayNameInput
-                        .value
-                        .trim();
-
-                if (!newName) return;
-
-                currentUser.displayName =
-                    newName;
-
-                if (
-                    modalAvatarPreview.dataset
-                        .tempAvatar
-                ) {
-
-                    currentUser.avatar =
-                        modalAvatarPreview
-                            .dataset
-                            .tempAvatar;
-
-                    delete modalAvatarPreview
-                        .dataset
-                        .tempAvatar;
-
-                }
-
-                localStorage.setItem(
-                    'xchat_acc_' +
-                    currentUser.username,
-                    JSON.stringify(
-                        currentUser
-                    )
-                );
-
-                localStorage.setItem(
-                    'xchat_current_user',
-                    JSON.stringify(
-                        currentUser
-                    )
-                );
-
-                updateUserAvatarUI();
-
-                loggedInUserDisplay.innerText =
-                    `Signed in as ${currentUser.displayName}`;
-
-                profileModal.classList.add(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        themeToggleBtn.addEventListener(
-            'click',
-            () => {
-
-                const theme =
-                    document.documentElement
-                        .getAttribute(
-                            'data-theme'
-                        );
-
-                document.documentElement
-                    .setAttribute(
-                        'data-theme',
-                        theme === 'dark'
-                            ? 'light'
-                            : 'dark'
-                    );
-
-            }
-        );
-
-
-        infoBtn.addEventListener(
-            'click',
-            () => {
-
-                renderParticipantsUI();
-
-                infoModal.classList.remove(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        closeInfoModalBtn.addEventListener(
-            'click',
-            () =>
-                infoModal.classList.add(
-                    'hidden'
-                )
-        );
-
-
-        openPrivateOptionsBtn.addEventListener(
-            'click',
-            () => {
-
-                chatSelectorSection.classList.add(
-                    'hidden'
-                );
-
-                privateCreationSection.classList.remove(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        backToMenuBtn.addEventListener(
-            'click',
-            () => {
-
-                privateCreationSection.classList.add(
-                    'hidden'
-                );
-
-                chatSelectorSection.classList.remove(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        cancelReplyBtn.addEventListener(
-            'click',
-            () => {
-
-                activeReplyingMessage = null;
-
-                replyBanner.style.display =
-                    'none';
-
-            }
-        );
-
-
-        leaveConversationBtn.addEventListener(
-            'click',
-            () => {
-
-                if (
-                    confirm(
-                        "Leave current conversation?"
-                    )
-                ) {
-
-                    executeCleanUp();
-
-                }
-
-            }
-        );
-
-
-        function executeCleanUp() {
-
-            if (localStream) {
-
-                localStream
-                    .getTracks()
-                    .forEach(
-                        t => t.stop()
-                    );
-
-                localStream = null;
-
-            }
-
-            if (currentCall) {
-
-                currentCall.close();
-                currentCall = null;
-
-            }
-
-            if (hostConnection) {
-
-                hostConnection.close();
-                hostConnection = null;
-
-            }
-
-            if (peer) {
-
-                peer.destroy();
-                peer = null;
-
-            }
-
-            connections = [];
-
-            onlineUsersMap.clear();
-
-            messageLog = [];
-
-            messagesBox.innerHTML =
-                '<div class="date-divider">Today</div>';
-
-            videoContainer.style.display =
-                'none';
-
-            hangUpBtn.classList.add(
+            profileModal.classList.remove(
                 'hidden'
             );
 
+        }
+    );
+
+
+    closeProfileModalBtn.addEventListener(
+        'click',
+        () => {
+
+            profileModal.classList.add(
+                'hidden'
+            );
+
+        }
+    );
+
+
+    uploadAvatarBtn.addEventListener(
+        'click',
+        () => {
+
+            profilePicInput.click();
+
+        }
+    );
+
+
+    profilePicInput.addEventListener(
+        'change',
+        e => {
+
+            const file =
+                e.target.files[0];
+
+            if (!file) return;
+
+            const reader =
+                new FileReader();
+
+            reader.onload =
+                event => {
+
+                    modalAvatarPreview.innerHTML =
+                        `<img src="${event.target.result}">`;
+
+                    modalAvatarPreview.dataset
+                        .tempAvatar =
+                        event.target.result;
+
+                };
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+
+    saveProfileBtn.addEventListener(
+        'click',
+        () => {
+
+            const newName =
+                modalDisplayNameInput.value
+                    .trim();
+
+            if (!newName) return;
+
+            currentUser.displayName =
+                newName;
+
+            if (
+                modalAvatarPreview
+                    .dataset
+                    .tempAvatar
+            ) {
+
+                currentUser.avatar =
+                    modalAvatarPreview
+                        .dataset
+                        .tempAvatar;
+
+            }
+
+            localStorage.setItem(
+                'xchat_acc_' +
+                currentUser.username,
+                JSON.stringify(
+                    currentUser
+                )
+            );
+
+            localStorage.setItem(
+                'xchat_current_user',
+                JSON.stringify(
+                    currentUser
+                )
+            );
+
+            loggedInUserDisplay.innerText =
+                `Signed in as ${currentUser.displayName}`;
+
+            updateUserAvatarUI();
+
+            profileModal.classList.add(
+                'hidden'
+            );
+
+        }
+    );
+
+
+    /*
+     * =========================================================
+     * THEME
+     * =========================================================
+     */
+
+    themeToggleBtn.addEventListener(
+        'click',
+        () => {
+
+            const current =
+                document.documentElement
+                    .getAttribute(
+                        'data-theme'
+                    );
+
+            document.documentElement
+                .setAttribute(
+                    'data-theme',
+                    current === 'dark'
+                        ? 'light'
+                        : 'dark'
+                );
+
+        }
+    );
+
+
+    /*
+     * =========================================================
+     * ROOM BUTTONS
+     * =========================================================
+     */
+
+    joinPublicBtn.addEventListener(
+        'click',
+        () => {
+
             setupScreen.style.display =
-                'flex';
+                'none';
+
+            roomTitleDisplay.innerText =
+                'Public Chat Lobby';
+
+            sidebarRoomLabel.innerText =
+                'Public Chat Lobby';
+
+            initPublicPeerConnection();
+
+        }
+    );
+
+
+    openPrivateOptionsBtn.addEventListener(
+        'click',
+        () => {
+
+            chatSelectorSection.classList.add(
+                'hidden'
+            );
+
+            privateCreationSection.classList.remove(
+                'hidden'
+            );
+
+        }
+    );
+
+
+    backToMenuBtn.addEventListener(
+        'click',
+        () => {
 
             privateCreationSection.classList.add(
                 'hidden'
@@ -2238,1029 +2465,612 @@
             );
 
         }
+    );
 
 
-        joinPublicBtn.addEventListener(
-            'click',
-            () => {
+    createPrivateBtn.addEventListener(
+        'click',
+        () => {
 
-                setupScreen.style.display =
-                    'none';
+            setupScreen.style.display =
+                'none';
 
-                roomTitleDisplay.innerText =
-                    "Public Chat Lobby";
+            roomTitleDisplay.innerText =
+                'Secure Conversation';
 
-                sidebarRoomLabel.innerText =
-                    "Public Chat Lobby";
+            sidebarRoomLabel.innerText =
+                'Secure Room';
 
-                initPublicPeerConnection();
+            const room =
+                'imsg_priv_' +
+                Math.random()
+                    .toString(36)
+                    .substring(2, 9);
+
+            initPeerConnection(
+                room,
+                true,
+                true
+            );
+
+        }
+    );
+
+
+    joinPrivateBtn.addEventListener(
+        'click',
+        () => {
+
+            const room =
+                joinCodeInput.value.trim();
+
+            if (!room) {
+
+                alert(
+                    'Enter invitation code.'
+                );
+
+                return;
 
             }
-        );
+
+            setupScreen.style.display =
+                'none';
+
+            roomTitleDisplay.innerText =
+                'Secure Conversation';
+
+            sidebarRoomLabel.innerText =
+                'Secure Room';
+
+            initPeerConnection(
+                room,
+                false,
+                false
+            );
+
+        }
+    );
 
 
-        createPrivateBtn.addEventListener(
-            'click',
+    /*
+     * =========================================================
+     * PEER CONNECTION
+     * =========================================================
+     */
+
+    function initPublicPeerConnection() {
+
+        peer =
+            new Peer(
+                PUBLIC_ROOM_PREFIX,
+                peerConfig
+            );
+
+        peer.on(
+            'open',
             () => {
 
-                setupScreen.style.display =
-                    'none';
+                isHost = true;
 
-                roomTitleDisplay.innerText =
-                    "Secure Conversation";
+                connectionStatus.innerText =
+                    'Hosting • 1 online';
 
-                sidebarRoomLabel.innerText =
-                    "Secure Room";
+                onlineUsersMap.set(
+                    peer.id,
+                    {
+                        profile:
+                            currentUser,
+                        peerId:
+                            peer.id
+                    }
+                );
 
-                const code =
-                    'imsg_priv_' +
-                    Math.random()
-                        .toString(36)
-                        .substring(2, 9);
-
-                initPeerConnection(
-                    code,
-                    true,
-                    true
+                appendSystemMessage(
+                    'Connected to Public Lobby.'
                 );
 
             }
         );
 
 
-        joinPrivateBtn.addEventListener(
-            'click',
-            () => {
+        peer.on(
+            'error',
+            err => {
 
-                const code =
-                    joinCodeInput.value.trim();
+                if (
+                    err.type ===
+                    'unavailable-id'
+                ) {
 
-                if (!code) {
+                    isHost = false;
 
-                    alert(
-                        'Enter invitation code.'
+                    peer =
+                        new Peer(
+                            peerConfig
+                        );
+
+                    peer.on(
+                        'open',
+                        () => {
+
+                            connectionStatus.innerText =
+                                'Connecting...';
+
+                            hostConnection =
+                                peer.connect(
+                                    PUBLIC_ROOM_PREFIX
+                                );
+
+                            setupClientConnection();
+
+                        }
                     );
-
-                    return;
 
                 }
 
-                setupScreen.style.display =
-                    'none';
-
-                roomTitleDisplay.innerText =
-                    "Secure Conversation";
-
-                sidebarRoomLabel.innerText =
-                    "Secure Room";
-
-                initPeerConnection(
-                    code,
-                    false,
-                    false
-                );
-
             }
         );
 
+        setupCommonPeerListeners();
 
-        function initPublicPeerConnection() {
+    }
 
-            peer =
-                new Peer(
-                    PUBLIC_ROOM_PREFIX,
+
+    function initPeerConnection(
+        targetId,
+        hosting,
+        creator
+    ) {
+
+        peer =
+            creator
+                ? new Peer(
+                    targetId,
+                    peerConfig
+                )
+                : new Peer(
                     peerConfig
                 );
 
-            peer.on(
-                'open',
-                () => {
+        peer.on(
+            'open',
+            id => {
+
+                if (creator) {
 
                     isHost = true;
 
                     connectionStatus.innerText =
-                        "Hosting • 1 online";
-
-                    appendSystemMessage(
-                        "Connected to Public Lobby."
-                    );
+                        'Hosting secure session';
 
                     onlineUsersMap.set(
                         peer.id,
-                        {
-                            profile: currentUser,
-                            peerId: peer.id
-                        }
-                    );
-
-                }
-            );
-
-
-            peer.on(
-                'error',
-                (err) => {
-
-                    if (
-                        err.type ===
-                        'unavailable-id'
-                    ) {
-
-                        isHost = false;
-
-                        peer =
-                            new Peer(
-                                peerConfig
-                            );
-
-                        peer.on(
-                            'open',
-                            () => {
-
-                                connectionStatus.innerText =
-                                    "Connecting...";
-
-                                hostConnection =
-                                    peer.connect(
-                                        PUBLIC_ROOM_PREFIX
-                                    );
-
-                                setupClientConnection();
-
-                            }
-                        );
-
-                    }
-
-                }
-            );
-
-            setupCommonPeerListeners();
-
-        }
-
-
-        function initPeerConnection(
-            targetId,
-            isHosting,
-            isCreator
-        ) {
-
-            peer =
-                isCreator
-                    ? new Peer(
-                        targetId,
-                        peerConfig
-                    )
-                    : new Peer(
-                        peerConfig
-                    );
-
-            peer.on(
-                'open',
-                (id) => {
-
-                    if (isCreator) {
-
-                        isHost = true;
-
-                        connectionStatus.innerText =
-                            "Hosting secure session";
-
-                        appendSystemMessage(
-                            "Secure room created."
-                        );
-
-                        appendCodeMessage(
-                            id
-                        );
-
-                        messageLog.push({
-                            type: 'SYSTEM',
-                            text:
-                                "Secure room created.",
-                            code: id
-                        });
-
-                        onlineUsersMap.set(
-                            peer.id,
-                            {
-                                profile: currentUser,
-                                peerId: peer.id
-                            }
-                        );
-
-                    } else {
-
-                        isHost = false;
-
-                        connectionStatus.innerText =
-                            "Connecting...";
-
-                        hostConnection =
-                            peer.connect(
-                                targetId
-                            );
-
-                        setupClientConnection();
-
-                    }
-
-                }
-            );
-
-            setupCommonPeerListeners();
-
-        }
-
-
-        function setupCommonPeerListeners() {
-
-            peer.on(
-                'connection',
-                (conn) => {
-
-                    connections.push(
-                        conn
-                    );
-
-                    conn.on(
-                        'data',
-                        (packet) =>
-                            handleIncomingPacket(
-                                packet,
-                                conn
-                            )
-                    );
-
-                    conn.on(
-                        'close',
-                        () => {
-
-                            connections =
-                                connections.filter(
-                                    c =>
-                                        c !== conn
-                                );
-
-                            for (
-                                let [
-                                    k,
-                                    v
-                                ]
-                                of onlineUsersMap.entries()
-                            ) {
-
-                                if (
-                                    v.conn ===
-                                    conn
-                                ) {
-
-                                    onlineUsersMap.delete(
-                                        k
-                                    );
-
-                                    break;
-
-                                }
-
-                            }
-
-                            if (isHost) {
-                                broadcastUserList();
-                            }
-
-                        }
-                    );
-
-                }
-            );
-
-
-            peer.on(
-                'call',
-                async (call) => {
-
-                    if (
-                        confirm(
-                            "Incoming video call. Accept?"
-                        )
-                    ) {
-
-                        localStream =
-                            await navigator
-                                .mediaDevices
-                                .getUserMedia({
-                                    video: true,
-                                    audio: true
-                                });
-
-                        localVideo.srcObject =
-                            localStream;
-
-                        videoContainer.style.display =
-                            'flex';
-
-                        hangUpBtn.classList.remove(
-                            'hidden'
-                        );
-
-                        call.answer(
-                            localStream
-                        );
-
-                        currentCall =
-                            call;
-
-                        call.on(
-                            'stream',
-                            (stream) => {
-
-                                remoteVideo.srcObject =
-                                    stream;
-
-                            }
-                        );
-
-                        call.on(
-                            'close',
-                            () =>
-                                endCallCleanUp()
-                        );
-
-                    } else {
-
-                        call.close();
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        function setupClientConnection() {
-
-            hostConnection.on(
-                'open',
-                () => {
-
-                    connectionStatus.innerText =
-                        "Connected";
-
-                    appendSystemMessage(
-                        "Joined secure room."
-                    );
-
-                    onlineUsersMap.set(
-                        peer.id,
-                        {
-                            profile: currentUser,
-                            peerId: peer.id
-                        }
-                    );
-
-                    hostConnection.send({
-                        type: 'JOIN',
-                        profile: currentUser,
-                        peerId: peer.id
-                    });
-
-                }
-            );
-
-
-            hostConnection.on(
-                'data',
-                (packet) =>
-                    handleIncomingPacket(
-                        packet,
-                        null
-                    )
-            );
-
-
-            hostConnection.on(
-                'close',
-                () => {
-
-                    connectionStatus.innerText =
-                        "Disconnected";
-
-                    appendSystemMessage(
-                        "Host connection lost."
-                    );
-
-                }
-            );
-
-        }
-
-
-        function handleIncomingPacket(
-            packet,
-            sourceConn
-        ) {
-
-            if (isHost) {
-
-                if (
-                    packet.type ===
-                    'JOIN'
-                ) {
-
-                    sourceConn.profile =
-                        packet.profile;
-
-                    onlineUsersMap.set(
-                        packet.peerId,
                         {
                             profile:
-                                packet.profile,
-                            conn:
-                                sourceConn,
+                                currentUser,
                             peerId:
-                                packet.peerId
+                                peer.id
                         }
                     );
 
-                    const msg =
-                        `${packet.profile.displayName} joined.`;
-
                     appendSystemMessage(
-                        msg
+                        'Secure room created.'
+                    );
+
+                    appendCodeMessage(
+                        id
                     );
 
                     messageLog.push({
-                        type: 'SYSTEM',
-                        text: msg
+                        type:
+                            'SYSTEM',
+                        text:
+                            'Secure room created.',
+                        code:
+                            id
                     });
 
-                    broadcastPacket(
-                        {
-                            type: 'SYSTEM',
-                            text: msg
-                        },
-                        sourceConn
-                    );
+                } else {
 
-                    broadcastUserList();
+                    isHost = false;
 
-                    if (
-                        sourceConn.open
-                    ) {
+                    connectionStatus.innerText =
+                        'Connecting...';
 
-                        sourceConn.send({
-                            type: 'HISTORY',
-                            history:
-                                messageLog
-                        });
+                    hostConnection =
+                        peer.connect(
+                            targetId
+                        );
 
-                    }
+                    setupClientConnection();
 
-                    return;
+                }
 
-                } else if (
-                    packet.type ===
-                        'CHAT' ||
-                    packet.type ===
-                        'FILE' ||
-                    packet.type ===
-                        'REACTION'
-                ) {
+            }
+        );
 
-                    if (
-                        packet.type ===
-                        'REACTION'
-                    ) {
+        setupCommonPeerListeners();
 
-                        const targetMsg =
-                            messageLog.find(
-                                m =>
-                                    m.id ===
-                                    packet.msgId
-                            );
+    }
 
-                        if (targetMsg) {
 
-                            if (
-                                !targetMsg.reactions
-                            ) {
+    function setupCommonPeerListeners() {
 
-                                targetMsg.reactions =
-                                    {};
+        peer.on(
+            'connection',
+            conn => {
 
-                            }
+                connections.push(
+                    conn
+                );
 
-                            targetMsg.reactions[
-                                packet.sender.username
-                            ] =
-                                packet.reaction;
+                conn.on(
+                    'data',
+                    packet => {
 
-                        }
-
-                    } else {
-
-                        messageLog.push(
-                            packet
+                        handleIncomingPacket(
+                            packet,
+                            conn
                         );
 
                     }
-
-                }
-
-                broadcastPacket(
-                    packet,
-                    sourceConn
                 );
 
-            }
+                conn.on(
+                    'close',
+                    () => {
 
-
-            if (
-                packet.type ===
-                'READ_RECEIPT'
-            ) {
-
-                const receipts =
-                    document.querySelectorAll(
-                        '.msg-meta-receipt'
-                    );
-
-                receipts.forEach(
-                    r =>
-                        r.innerText =
-                            'Read'
-                );
-
-                return;
-
-            }
-
-
-            if (
-                packet.type ===
-                'REACTION'
-            ) {
-
-                const targetMsg =
-                    messageLog.find(
-                        m =>
-                            m.id ===
-                            packet.msgId
-                    );
-
-                if (targetMsg) {
-
-                    if (
-                        !targetMsg.reactions
-                    ) {
-
-                        targetMsg.reactions =
-                            {};
-
-                    }
-
-                    targetMsg.reactions[
-                        packet.sender.username
-                    ] =
-                        packet.reaction;
-
-                }
-
-                applyReactionToDOM(
-                    packet.msgId,
-                    packet.reaction
-                );
-
-                return;
-
-            }
-
-
-            if (
-                packet.sender &&
-                packet.sender.username ===
-                    currentUser.username &&
-                packet.type !==
-                    'SYSTEM'
-            ) {
-
-                return;
-
-            }
-
-
-            if (
-                packet.type ===
-                'CHAT'
-            ) {
-
-                appendMessage(
-                    packet,
-                    'received'
-                );
-
-                sidebarLastMsg.innerText =
-                    packet.text;
-
-                sendReadReceipt();
-
-            } else if (
-                packet.type ===
-                'FILE'
-            ) {
-
-                appendFileMessage(
-                    packet,
-                    'received'
-                );
-
-                sidebarLastMsg.innerText =
-                    "Sent an attachment";
-
-                sendReadReceipt();
-
-            } else if (
-                packet.type ===
-                'SYSTEM'
-            ) {
-
-                appendSystemMessage(
-                    packet.text
-                );
-
-                if (packet.code) {
-                    appendCodeMessage(
-                        packet.code
-                    );
-                }
-
-            } else if (
-                packet.type ===
-                'USER_LIST'
-            ) {
-
-                onlineUsersMap.clear();
-
-                packet.users.forEach(
-                    u =>
-                        onlineUsersMap.set(
-                            u.peerId,
-                            u
-                        )
-                );
-
-            } else if (
-                packet.type ===
-                'HISTORY'
-            ) {
-
-                messagesBox.innerHTML =
-                    '<div class="date-divider">Today</div>';
-
-                messageLog =
-                    packet.history;
-
-                packet.history.forEach(
-                    item => {
-
-                        if (
-                            item.type ===
-                            'CHAT'
-                        ) {
-
-                            const t =
-                                item.sender.username ===
-                                currentUser.username
-                                    ? 'sent'
-                                    : 'received';
-
-                            appendMessage(
-                                item,
-                                t
+                        connections =
+                            connections.filter(
+                                c =>
+                                    c !== conn
                             );
 
-                        } else if (
-                            item.type ===
-                            'SYSTEM'
-                        ) {
-
-                            appendSystemMessage(
-                                item.text
-                            );
-
-                            if (
-                                item.code
-                            ) {
-
-                                appendCodeMessage(
-                                    item.code
-                                );
-
-                            }
-
-                        } else if (
-                            item.type ===
-                            'FILE'
-                        ) {
-
-                            const t =
-                                item.sender.username ===
-                                currentUser.username
-                                    ? 'sent'
-                                    : 'received';
-
-                            appendFileMessage(
-                                item,
-                                t
-                            );
-
+                        if (isHost) {
+                            broadcastUserList();
                         }
 
                     }
                 );
 
-            } else if (
-                packet.type ===
-                'TYPING'
-            ) {
+            }
+        );
 
-                typingSenderName.innerText =
-                    packet.displayName;
 
-                typingBubble.classList.remove(
-                    'hidden'
+        /*
+         * IMPORTANT:
+         *
+         * PeerJS carries the caller's profile inside
+         * call.metadata.
+         *
+         * So if Joe calls Bob:
+         *
+         * call.metadata.profile.displayName
+         *
+         * will be "Joe".
+         */
+
+        peer.on(
+            'call',
+            call => {
+
+                showIncomingCallScreen(
+                    call
                 );
-
-                clearTimeout(
-                    window.typingTimer
-                );
-
-                window.typingTimer =
-                    setTimeout(
-                        () =>
-                            typingBubble.classList.add(
-                                'hidden'
-                            ),
-                        1500
-                    );
 
             }
+        );
 
-        }
+    }
 
 
-        function sendReadReceipt() {
+    function setupClientConnection() {
 
-            const receiptPacket = {
-                type: 'READ_RECEIPT'
-            };
+        hostConnection.on(
+            'open',
+            () => {
 
-            if (isHost) {
+                connectionStatus.innerText =
+                    'Connected';
 
-                broadcastPacket(
-                    receiptPacket,
+                onlineUsersMap.set(
+                    peer.id,
+                    {
+                        profile:
+                            currentUser,
+                        peerId:
+                            peer.id
+                    }
+                );
+
+                hostConnection.send({
+                    type:
+                        'JOIN',
+
+                    profile:
+                        currentUser,
+
+                    peerId:
+                        peer.id
+
+                });
+
+            }
+        );
+
+
+        hostConnection.on(
+            'data',
+            packet => {
+
+                handleIncomingPacket(
+                    packet,
                     null
                 );
 
-            } else if (
-                hostConnection &&
-                hostConnection.open
-            ) {
+            }
+        );
 
-                hostConnection.send(
-                    receiptPacket
+
+        hostConnection.on(
+            'close',
+            () => {
+
+                connectionStatus.innerText =
+                    'Disconnected';
+
+            }
+        );
+
+    }
+
+
+    function handleIncomingPacket(
+        packet,
+        sourceConn
+    ) {
+
+        if (
+            packet.type ===
+            'JOIN'
+        ) {
+
+            if (isHost) {
+
+                onlineUsersMap.set(
+                    packet.peerId,
+                    {
+                        profile:
+                            packet.profile,
+
+                        peerId:
+                            packet.peerId,
+
+                        conn:
+                            sourceConn
+                    }
                 );
+
+                broadcastUserList();
 
             }
 
+            return;
+
         }
 
 
-        function broadcastPacket(
-            packet,
-            exclude
+        if (
+            packet.type ===
+            'USER_LIST'
         ) {
 
-            connections.forEach(
-                c => {
+            onlineUsersMap.clear();
 
-                    if (
-                        c !== exclude &&
-                        c.open
-                    ) {
+            packet.users.forEach(
+                user => {
 
-                        c.send(packet);
-
-                    }
+                    onlineUsersMap.set(
+                        user.peerId,
+                        user
+                    );
 
                 }
             );
+
+            return;
 
         }
 
 
-        function broadcastUserList() {
-
-            const users = [];
-
-            onlineUsersMap.forEach(
-                (v, k) => {
-
-                    users.push({
-                        profile:
-                            v.profile || v,
-                        peerId:
-                            k
-                    });
-
-                }
-            );
-
-            connectionStatus.innerText =
-                `Connected • ${users.length} online`;
-
-            const packet = {
-                type: 'USER_LIST',
-                users
-            };
-
-            connections.forEach(
-                c => {
-
-                    if (c.open) {
-                        c.send(packet);
-                    }
-
-                }
-            );
-
-        }
-
-
-        function renderParticipantsUI() {
-
-            participantsListContainer.innerHTML =
-                '';
-
-            onlineUsersMap.forEach(
-                (val, peerId) => {
-
-                    const profile =
-                        val.profile || val;
-
-                    const row =
-                        document.createElement(
-                            'div'
-                        );
-
-                    row.className =
-                        'user-list-item';
-
-                    const left =
-                        document.createElement(
-                            'div'
-                        );
-
-                    left.className =
-                        'user-info-left';
-
-                    const av =
-                        document.createElement(
-                            'div'
-                        );
-
-                    av.className =
-                        'list-avatar';
-
-                    av.style.width =
-                        '30px';
-
-                    av.style.height =
-                        '30px';
-
-                    av.style.fontSize =
-                        '0.75rem';
-
-                    if (profile.avatar) {
-
-                        av.innerHTML =
-                            `<img src="${profile.avatar}" style="width:100%;height:100%;object-fit:cover;">`;
-
-                    } else {
-
-                        av.innerText =
-                            profile.displayName
-                                ? profile.displayName
-                                    .charAt(0)
-                                    .toUpperCase()
-                                : '👤';
-
-                    }
-
-                    const nameSpan =
-                        document.createElement(
-                            'span'
-                        );
-
-                    nameSpan.style.fontSize =
-                        '0.85rem';
-
-                    nameSpan.style.fontWeight =
-                        '500';
-
-                    nameSpan.innerText =
-                        profile.displayName +
-                        (
-                            peerId === peer.id
-                                ? ' (You)'
-                                : ''
-                        );
-
-                    left.appendChild(
-                        av
-                    );
-
-                    left.appendChild(
-                        nameSpan
-                    );
-
-                    row.appendChild(
-                        left
-                    );
-
-                    const actionsDiv =
-                        document.createElement(
-                            'div'
-                        );
-
-                    actionsDiv.style.display =
-                        'flex';
-
-                    actionsDiv.style.gap =
-                        '4px';
-
-                    if (
-                        peerId !==
-                        peer.id
-                    ) {
-
-                        const callBtn =
-                            document.createElement(
-                                'button'
-                            );
-
-                        callBtn.className =
-                            'ios-btn';
-
-                        callBtn.style.fontSize =
-                            '0.75rem';
-
-                        callBtn.style.padding =
-                            '4px 8px';
-
-                        callBtn.style.width =
-                            'auto';
-
-                        callBtn.innerText =
-                            'Call';
-
-                        callBtn.onclick =
-                            () =>
-                                startVideoCall(
-                                    peerId
-                                );
-
-                        actionsDiv.appendChild(
-                            callBtn
-                        );
-
-                    }
-
-                    row.appendChild(
-                        actionsDiv
-                    );
-
-                    participantsListContainer
-                        .appendChild(
-                            row
-                        );
-
-                }
-            );
-
-        }
-
-
-        async function startVideoCall(
-            targetPeerId
+        if (
+            packet.type ===
+            'CHAT'
         ) {
 
-            infoModal.classList.add(
+            if (
+                packet.sender.username ===
+                currentUser.username
+            ) {
+                return;
+            }
+
+            appendMessage(
+                packet,
+                'received'
+            );
+
+            messageLog.push(
+                packet
+            );
+
+            sidebarLastMsg.innerText =
+                packet.text;
+
+            return;
+
+        }
+
+
+        if (
+            packet.type ===
+            'SYSTEM'
+        ) {
+
+            appendSystemMessage(
+                packet.text
+            );
+
+            return;
+
+        }
+
+
+        if (
+            packet.type ===
+            'FILE'
+        ) {
+
+            if (
+                packet.sender.username ===
+                currentUser.username
+            ) {
+                return;
+            }
+
+            appendFileMessage(
+                packet,
+                'received'
+            );
+
+            return;
+
+        }
+
+
+        if (
+            packet.type ===
+            'REACTION'
+        ) {
+
+            applyReactionToDOM(
+                packet.msgId,
+                packet.reaction
+            );
+
+            return;
+
+        }
+
+
+        if (
+            packet.type ===
+            'TYPING'
+        ) {
+
+            typingSenderName.innerText =
+                packet.displayName;
+
+            typingBubble.classList.remove(
                 'hidden'
             );
+
+            clearTimeout(
+                window.typingTimer
+            );
+
+            window.typingTimer =
+                setTimeout(
+                    () => {
+
+                        typingBubble.classList.add(
+                            'hidden'
+                        );
+
+                    },
+                    1500
+                );
+
+        }
+
+    }
+
+
+    function broadcastPacket(
+        packet,
+        exclude
+    ) {
+
+        connections.forEach(
+            connection => {
+
+                if (
+                    connection !==
+                    exclude &&
+                    connection.open
+                ) {
+
+                    connection.send(
+                        packet
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    function broadcastUserList() {
+
+        if (!isHost) return;
+
+        const users = [];
+
+        onlineUsersMap.forEach(
+            (value, peerId) => {
+
+                users.push({
+                    profile:
+                        value.profile,
+                    peerId
+                });
+
+            }
+        );
+
+        connectionStatus.innerText =
+            `Connected • ${users.length} online`;
+
+        broadcastPacket(
+            {
+                type:
+                    'USER_LIST',
+                users
+            },
+            null
+        );
+
+    }
+
+
+    /*
+     * =========================================================
+     * VIDEO CALLING
+     * =========================================================
+     */
+
+    async function startVideoCall(
+        targetPeerId
+    ) {
+
+        infoModal.classList.add(
+            'hidden'
+        );
+
+        try {
 
             localStream =
                 await navigator
@@ -3280,18 +3090,50 @@
                 'hidden'
             );
 
+
+            /*
+             * THIS IS THE IMPORTANT PART.
+             *
+             * The caller's actual profile is sent
+             * through PeerJS metadata.
+             *
+             * If Joe calls Bob:
+             *
+             * metadata.profile.displayName = "Joe"
+             *
+             * Bob receives that profile and the
+             * incoming screen becomes:
+             *
+             * "Joe is calling"
+             */
+
             const call =
                 peer.call(
                     targetPeerId,
-                    localStream
+                    localStream,
+                    {
+                        metadata: {
+                            profile: {
+                                username:
+                                    currentUser.username,
+
+                                displayName:
+                                    currentUser.displayName,
+
+                                avatar:
+                                    currentUser.avatar
+                            }
+                        }
+                    }
                 );
 
             currentCall =
                 call;
 
+
             call.on(
                 'stream',
-                (stream) => {
+                stream => {
 
                     remoteVideo.srcObject =
                         stream;
@@ -3299,63 +3141,411 @@
                 }
             );
 
+
             call.on(
                 'close',
-                () =>
-                    endCallCleanUp()
+                () => {
+
+                    endCallCleanUp();
+
+                }
+            );
+
+
+            call.on(
+                'error',
+                () => {
+
+                    endCallCleanUp();
+
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+            alert(
+                'Could not access your camera or microphone.'
             );
 
         }
 
+    }
 
-        messageInput.addEventListener(
-            'input',
-            () => {
 
-                const p = {
+    /*
+     * SHOW INCOMING CALL
+     */
 
-                    type:
-                        'TYPING',
+    function showIncomingCallScreen(
+        call
+    ) {
 
+        if (
+            incomingCall ||
+            currentCall
+        ) {
+
+            try {
+                call.close();
+            } catch {}
+
+            return;
+
+        }
+
+
+        incomingCall =
+            call;
+
+
+        /*
+         * Get the REAL caller's profile.
+         *
+         * This is the profile that startVideoCall()
+         * placed into call.metadata.
+         */
+
+        const callerProfile =
+            call.metadata &&
+            call.metadata.profile
+                ? call.metadata.profile
+                : {
                     displayName:
-                        currentUser.displayName
-
+                        'Unknown Caller',
+                    avatar: ''
                 };
 
-                if (isHost) {
 
-                    broadcastPacket(
-                        p,
-                        null
-                    );
+        incomingCallerProfile =
+            callerProfile;
 
-                } else if (
-                    hostConnection &&
-                    hostConnection.open
+
+        /*
+         * REAL CALLER NAME
+         */
+
+        const callerName =
+            callerProfile.displayName ||
+            callerProfile.username ||
+            'Unknown Caller';
+
+
+        incomingCallName.innerText =
+            callerName;
+
+
+        /*
+         * REAL CALLER AVATAR
+         */
+
+        if (
+            callerProfile.avatar
+        ) {
+
+            incomingCallAvatar.innerHTML =
+                `<img
+                    src="${callerProfile.avatar}"
+                    alt="${escapeHtml(callerName)}"
+                >`;
+
+        } else {
+
+            incomingCallAvatar.innerText =
+                callerName
+                    .charAt(0)
+                    .toUpperCase();
+
+        }
+
+
+        /*
+         * The CSS automatically adds:
+         *
+         * " is calling"
+         *
+         * after the actual name.
+         */
+
+        incomingCallScreen.classList.remove(
+            'hidden'
+        );
+
+
+        /*
+         * If caller hangs up before Bob accepts,
+         * remove the incoming call screen.
+         */
+
+        call.on(
+            'close',
+            () => {
+
+                if (
+                    incomingCall === call
                 ) {
 
-                    hostConnection.send(
-                        p
-                    );
+                    incomingCall =
+                        null;
+
+                    hideIncomingCallScreen();
 
                 }
 
             }
         );
 
+    }
 
-        chatForm.addEventListener(
-            'submit',
-            (e) => {
 
-                e.preventDefault();
+    /*
+     * ACCEPT
+     */
 
-                const text =
-                    messageInput.value.trim();
+    acceptCallBtn.addEventListener(
+        'click',
+        async () => {
 
-                if (!text) return;
+            if (!incomingCall) {
+                return;
+            }
 
-                const timeStr =
+            const call =
+                incomingCall;
+
+            incomingCall =
+                null;
+
+            hideIncomingCallScreen();
+
+
+            try {
+
+                localStream =
+                    await navigator
+                        .mediaDevices
+                        .getUserMedia({
+                            video: true,
+                            audio: true
+                        });
+
+
+                localVideo.srcObject =
+                    localStream;
+
+                videoContainer.style.display =
+                    'flex';
+
+                hangUpBtn.classList.remove(
+                    'hidden'
+                );
+
+
+                currentCall =
+                    call;
+
+
+                call.answer(
+                    localStream
+                );
+
+
+                call.on(
+                    'stream',
+                    stream => {
+
+                        remoteVideo.srcObject =
+                            stream;
+
+                    }
+                );
+
+
+                call.on(
+                    'close',
+                    () => {
+
+                        endCallCleanUp();
+
+                    }
+                );
+
+
+                call.on(
+                    'error',
+                    () => {
+
+                        endCallCleanUp();
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    'Camera/microphone error:',
+                    error
+                );
+
+                try {
+                    call.close();
+                } catch {}
+
+                currentCall =
+                    null;
+
+                alert(
+                    'Could not access your camera or microphone.'
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * DECLINE
+     */
+
+    declineCallBtn.addEventListener(
+        'click',
+        () => {
+
+            if (incomingCall) {
+
+                try {
+
+                    incomingCall.close();
+
+                } catch {}
+
+            }
+
+            incomingCall =
+                null;
+
+            hideIncomingCallScreen();
+
+        }
+    );
+
+
+    function hideIncomingCallScreen() {
+
+        incomingCallScreen.classList.add(
+            'hidden'
+        );
+
+        incomingCallAvatar.innerHTML =
+            '👤';
+
+        incomingCallName.innerText =
+            'Someone';
+
+        incomingCallerProfile =
+            null;
+
+    }
+
+
+    /*
+     * =========================================================
+     * HANG UP
+     * =========================================================
+     */
+
+    hangUpBtn.addEventListener(
+        'click',
+        () => {
+
+            if (currentCall) {
+
+                try {
+                    currentCall.close();
+                } catch {}
+
+            }
+
+            endCallCleanUp();
+
+        }
+    );
+
+
+    function endCallCleanUp() {
+
+        if (localStream) {
+
+            localStream
+                .getTracks()
+                .forEach(
+                    track =>
+                        track.stop()
+                );
+
+            localStream =
+                null;
+
+        }
+
+        localVideo.srcObject =
+            null;
+
+        remoteVideo.srcObject =
+            null;
+
+        videoContainer.style.display =
+            'none';
+
+        hangUpBtn.classList.add(
+            'hidden'
+        );
+
+        currentCall =
+            null;
+
+    }
+
+
+    /*
+     * =========================================================
+     * MESSAGES
+     * =========================================================
+     */
+
+    chatForm.addEventListener(
+        'submit',
+        e => {
+
+            e.preventDefault();
+
+            const text =
+                messageInput.value.trim();
+
+            if (!text) return;
+
+            const packet = {
+
+                type:
+                    'CHAT',
+
+                id:
+                    'msg_' +
+                    Math.random()
+                        .toString(36)
+                        .substring(2, 9),
+
+                sender:
+                    currentUser,
+
+                text,
+
+                time:
                     new Date()
                         .toLocaleTimeString(
                             [],
@@ -3365,109 +3555,156 @@
                                 minute:
                                     '2-digit'
                             }
-                        );
+                        ),
 
-                const msgId =
-                    'msg_' +
-                    Math.random()
-                        .toString(36)
-                        .substring(2, 9);
+                replyTo:
+                    activeReplyingMessage
+                        ? activeReplyingMessage.text
+                        : null
 
-                const packet = {
+            };
 
-                    type:
-                        'CHAT',
 
-                    id:
-                        msgId,
+            messageLog.push(
+                packet
+            );
 
-                    sender:
-                        currentUser,
 
-                    text:
-                        text,
+            appendMessage(
+                packet,
+                'sent'
+            );
 
-                    time:
-                        timeStr,
 
-                    replyTo:
-                        activeReplyingMessage
-                            ? activeReplyingMessage.text
-                            : null
+            if (isHost) {
 
-                };
+                broadcastPacket(
+                    packet,
+                    null
+                );
 
-                messageLog.push(
+            } else if (
+                hostConnection &&
+                hostConnection.open
+            ) {
+
+                hostConnection.send(
                     packet
                 );
 
-                if (isHost) {
+            }
 
-                    appendMessage(
-                        packet,
-                        'sent'
-                    );
 
-                    broadcastPacket(
-                        packet,
-                        null
-                    );
+            sidebarLastMsg.innerText =
+                text;
 
-                } else if (
-                    hostConnection &&
-                    hostConnection.open
-                ) {
+            messageInput.value =
+                '';
 
-                    hostConnection.send(
-                        packet
-                    );
+            activeReplyingMessage =
+                null;
 
-                    appendMessage(
-                        packet,
-                        'sent'
-                    );
+            replyBanner.style.display =
+                'none';
 
-                }
+        }
+    );
 
-                sidebarLastMsg.innerText =
-                    text;
 
-                messageInput.value =
-                    '';
+    /*
+     * =========================================================
+     * TYPING
+     * =========================================================
+     */
 
-                activeReplyingMessage =
-                    null;
+    messageInput.addEventListener(
+        'input',
+        () => {
 
-                replyBanner.style.display =
-                    'none';
+            const packet = {
+
+                type:
+                    'TYPING',
+
+                displayName:
+                    currentUser.displayName
+
+            };
+
+            if (isHost) {
+
+                broadcastPacket(
+                    packet,
+                    null
+                );
+
+            } else if (
+                hostConnection &&
+                hostConnection.open
+            ) {
+
+                hostConnection.send(
+                    packet
+                );
 
             }
-        );
+
+        }
+    );
 
 
-        fileBtn.addEventListener(
-            'click',
-            () =>
-                fileInput.click()
-        );
+    /*
+     * =========================================================
+     * FILES
+     * =========================================================
+     */
+
+    fileBtn.addEventListener(
+        'click',
+        () => {
+
+            fileInput.click();
+
+        }
+    );
 
 
-        fileInput.addEventListener(
-            'change',
-            (e) => {
+    fileInput.addEventListener(
+        'change',
+        e => {
 
-                const file =
-                    e.target.files[0];
+            const file =
+                e.target.files[0];
 
-                if (!file) return;
+            if (!file) return;
 
-                const reader =
-                    new FileReader();
+            const reader =
+                new FileReader();
 
-                reader.onload =
-                    (evt) => {
+            reader.onload =
+                event => {
 
-                        const timeStr =
+                    const packet = {
+
+                        type:
+                            'FILE',
+
+                        id:
+                            'msg_' +
+                            Math.random()
+                                .toString(36)
+                                .substring(2, 9),
+
+                        sender:
+                            currentUser,
+
+                        fileData:
+                            event.target.result,
+
+                        fileName:
+                            file.name,
+
+                        time:
                             new Date()
                                 .toLocaleTimeString(
                                     [],
@@ -3477,786 +3714,858 @@
                                         minute:
                                             '2-digit'
                                     }
-                                );
-
-                        const msgId =
-                            'msg_' +
-                            Math.random()
-                                .toString(36)
-                                .substring(2, 9);
-
-                        const packet = {
-
-                            type:
-                                'FILE',
-
-                            id:
-                                msgId,
-
-                            sender:
-                                currentUser,
-
-                            fileData:
-                                evt.target.result,
-
-                            fileName:
-                                file.name,
-
-                            time:
-                                timeStr
-
-                        };
-
-                        messageLog.push(
-                            packet
-                        );
-
-                        if (isHost) {
-
-                            appendFileMessage(
-                                packet,
-                                'sent'
-                            );
-
-                            broadcastPacket(
-                                packet,
-                                null
-                            );
-
-                        } else if (
-                            hostConnection &&
-                            hostConnection.open
-                        ) {
-
-                            hostConnection.send(
-                                packet
-                            );
-
-                            appendFileMessage(
-                                packet,
-                                'sent'
-                            );
-
-                        }
-
-                        sidebarLastMsg.innerText =
-                            "Attachment";
-
-                        fileInput.value =
-                            '';
+                                )
 
                     };
 
-                reader.readAsDataURL(
-                    file
-                );
 
-            }
-        );
-
-
-        emojiBtn.addEventListener(
-            'click',
-            (e) => {
-
-                e.stopPropagation();
-
-                emojiPickerPopup.classList.toggle(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        emojiPickerPopup
-            .querySelectorAll('button')
-            .forEach(
-                btn => {
-
-                    btn.addEventListener(
-                        'click',
-                        (e) => {
-
-                            messageInput.value +=
-                                e.target.innerText;
-
-                            emojiPickerPopup.classList.add(
-                                'hidden'
-                            );
-
-                            messageInput.focus();
-
-                        }
+                    messageLog.push(
+                        packet
                     );
 
-                }
-            );
-
-
-        function buildMessageWrapper(
-            msg,
-            type
-        ) {
-
-            const wrapper =
-                document.createElement(
-                    'div'
-                );
-
-            wrapper.className =
-                `message-wrapper ${type} show-sender`;
-
-            wrapper.dataset.msgId =
-                msg.id;
-
-            const senderTag =
-                document.createElement(
-                    'div'
-                );
-
-            senderTag.className =
-                'sender-tag';
-
-            senderTag.innerText =
-                msg.sender.displayName;
-
-            wrapper.appendChild(
-                senderTag
-            );
-
-            const container =
-                document.createElement(
-                    'div'
-                );
-
-            container.className =
-                'bubble-container';
-
-            const bubble =
-                document.createElement(
-                    'div'
-                );
-
-            bubble.className =
-                'bubble';
-
-            if (msg.replyTo) {
-
-                const quote =
-                    document.createElement(
-                        'div'
+                    appendFileMessage(
+                        packet,
+                        'sent'
                     );
 
-                quote.className =
-                    'reply-quote';
 
-                quote.innerText =
-                    msg.replyTo;
+                    if (isHost) {
 
-                bubble.appendChild(
-                    quote
-                );
+                        broadcastPacket(
+                            packet,
+                            null
+                        );
 
-            }
-
-            const txtSpan =
-                document.createElement(
-                    'span'
-                );
-
-            txtSpan.innerText =
-                msg.text;
-
-            bubble.appendChild(
-                txtSpan
-            );
-
-            bubble.addEventListener(
-                'contextmenu',
-                (e) => {
-
-                    e.preventDefault();
-
-                    e.stopPropagation();
-
-                    contextTargetMessageId =
-                        msg.id;
-
-                    bubbleContextMenu.style.top =
-                        `${e.clientY}px`;
-
-                    bubbleContextMenu.style.left =
-                        `${e.clientX}px`;
-
-                    bubbleContextMenu.classList.remove(
-                        'hidden'
-                    );
-
-                }
-            );
-
-            container.appendChild(
-                bubble
-            );
-
-            if (
-                msg.reactions &&
-                Object.keys(
-                    msg.reactions
-                ).length > 0
-            ) {
-
-                const badge =
-                    document.createElement(
-                        'div'
-                    );
-
-                badge.className =
-                    'reaction-badge';
-
-                badge.id =
-                    `reaction_${msg.id}`;
-
-                badge.innerText =
-                    Object.values(
-                        msg.reactions
-                    ).join(' ');
-
-                container.appendChild(
-                    badge
-                );
-
-            }
-
-            wrapper.appendChild(
-                container
-            );
-
-            if (type === 'sent') {
-
-                const meta =
-                    document.createElement(
-                        'div'
-                    );
-
-                meta.className =
-                    'msg-meta-receipt';
-
-                meta.innerText =
-                    'Delivered';
-
-                wrapper.appendChild(
-                    meta
-                );
-
-            }
-
-            return wrapper;
-
-        }
-
-
-        function appendMessage(
-            msg,
-            type
-        ) {
-
-            const row =
-                buildMessageWrapper(
-                    msg,
-                    type
-                );
-
-            messagesBox.appendChild(
-                row
-            );
-
-            messagesBox.scrollTop =
-                messagesBox.scrollHeight;
-
-        }
-
-
-        function appendFileMessage(
-            msg,
-            type
-        ) {
-
-            const wrapper =
-                document.createElement(
-                    'div'
-                );
-
-            wrapper.className =
-                `message-wrapper ${type} show-sender`;
-
-            wrapper.dataset.msgId =
-                msg.id;
-
-            const senderTag =
-                document.createElement(
-                    'div'
-                );
-
-            senderTag.className =
-                'sender-tag';
-
-            senderTag.innerText =
-                msg.sender.displayName;
-
-            wrapper.appendChild(
-                senderTag
-            );
-
-            const container =
-                document.createElement(
-                    'div'
-                );
-
-            container.className =
-                'bubble-container';
-
-            const bubble =
-                document.createElement(
-                    'div'
-                );
-
-            bubble.className =
-                'bubble';
-
-            bubble.innerHTML =
-                `📎 <a href="${msg.fileData}" download="${msg.fileName}" style="color:inherit;">${msg.fileName}</a><br><img src="${msg.fileData}" alt="img">`;
-
-            bubble.addEventListener(
-                'contextmenu',
-                (e) => {
-
-                    e.preventDefault();
-
-                    e.stopPropagation();
-
-                    contextTargetMessageId =
-                        msg.id;
-
-                    bubbleContextMenu.style.top =
-                        `${e.clientY}px`;
-
-                    bubbleContextMenu.style.left =
-                        `${e.clientX}px`;
-
-                    bubbleContextMenu.classList.remove(
-                        'hidden'
-                    );
-
-                }
-            );
-
-            container.appendChild(
-                bubble
-            );
-
-            if (
-                msg.reactions &&
-                Object.keys(
-                    msg.reactions
-                ).length > 0
-            ) {
-
-                const badge =
-                    document.createElement(
-                        'div'
-                    );
-
-                badge.className =
-                    'reaction-badge';
-
-                badge.id =
-                    `reaction_${msg.id}`;
-
-                badge.innerText =
-                    Object.values(
-                        msg.reactions
-                    ).join(' ');
-
-                container.appendChild(
-                    badge
-                );
-
-            }
-
-            wrapper.appendChild(
-                container
-            );
-
-            messagesBox.appendChild(
-                wrapper
-            );
-
-            messagesBox.scrollTop =
-                messagesBox.scrollHeight;
-
-        }
-
-
-        ctxMenuReply.addEventListener(
-            'click',
-            () => {
-
-                const targetMsg =
-                    messageLog.find(
-                        m =>
-                            m.id ===
-                            contextTargetMessageId
-                    );
-
-                if (targetMsg) {
-
-                    activeReplyingMessage =
-                        targetMsg;
-
-                    replyBannerText.innerText =
-                        `Replying to: "${targetMsg.text || targetMsg.fileName}"`;
-
-                    replyBanner.style.display =
-                        'flex';
-
-                    messageInput.focus();
-
-                }
-
-                bubbleContextMenu.classList.add(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        ctxMenuSender.addEventListener(
-            'click',
-            () => {
-
-                const targetMsg =
-                    messageLog.find(
-                        m =>
-                            m.id ===
-                            contextTargetMessageId
-                    );
-
-                if (targetMsg) {
-
-                    alert(
-                        `Sender: ${targetMsg.sender.displayName} (@${targetMsg.sender.username})`
-                    );
-
-                }
-
-                bubbleContextMenu.classList.add(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        document
-            .querySelectorAll(
-                '.context-reaction-btn'
-            )
-            .forEach(
-                btn => {
-
-                    if (
-                        btn.closest(
-                            '#emojiPickerPopup'
-                        )
+                    } else if (
+                        hostConnection &&
+                        hostConnection.open
                     ) {
-                        return;
+
+                        hostConnection.send(
+                            packet
+                        );
+
                     }
 
-                    btn.addEventListener(
-                        'click',
-                        (e) => {
+                    fileInput.value =
+                        '';
 
-                            e.stopPropagation();
+                };
 
-                            const reaction =
-                                btn.getAttribute(
-                                    'data-reaction'
-                                );
-
-                            if (
-                                !contextTargetMessageId
-                            ) {
-                                return;
-                            }
-
-                            const packet = {
-
-                                type:
-                                    'REACTION',
-
-                                msgId:
-                                    contextTargetMessageId,
-
-                                reaction:
-                                    reaction,
-
-                                sender:
-                                    currentUser
-
-                            };
-
-                            const targetMsg =
-                                messageLog.find(
-                                    m =>
-                                        m.id ===
-                                        contextTargetMessageId
-                                );
-
-                            if (targetMsg) {
-
-                                if (
-                                    !targetMsg.reactions
-                                ) {
-
-                                    targetMsg.reactions =
-                                        {};
-
-                                }
-
-                                targetMsg.reactions[
-                                    currentUser.username
-                                ] =
-                                    reaction;
-
-                            }
-
-                            applyReactionToDOM(
-                                contextTargetMessageId,
-                                reaction
-                            );
-
-                            if (isHost) {
-
-                                broadcastPacket(
-                                    packet,
-                                    null
-                                );
-
-                            } else if (
-                                hostConnection &&
-                                hostConnection.open
-                            ) {
-
-                                hostConnection.send(
-                                    packet
-                                );
-
-                            }
-
-                            bubbleContextMenu.classList.add(
-                                'hidden'
-                            );
-
-                        }
-                    );
-
-                }
+            reader.readAsDataURL(
+                file
             );
 
+        }
+    );
 
-        function applyReactionToDOM(
-            msgId,
-            reaction
-        ) {
 
-            const wrapper =
-                document.querySelector(
-                    `[data-msg-id="${msgId}"]`
+    /*
+     * =========================================================
+     * MESSAGES UI
+     * =========================================================
+     */
+
+    function appendMessage(
+        msg,
+        type
+    ) {
+
+        const wrapper =
+            document.createElement(
+                'div'
+            );
+
+        wrapper.className =
+            `message-wrapper ${type}`;
+
+        wrapper.dataset.msgId =
+            msg.id;
+
+
+        const sender =
+            document.createElement(
+                'div'
+            );
+
+        sender.className =
+            'sender-tag';
+
+        sender.innerText =
+            msg.sender.displayName;
+
+        wrapper.appendChild(
+            sender
+        );
+
+
+        const container =
+            document.createElement(
+                'div'
+            );
+
+        container.className =
+            'bubble-container';
+
+
+        const bubble =
+            document.createElement(
+                'div'
+            );
+
+        bubble.className =
+            'bubble';
+
+
+        if (msg.replyTo) {
+
+            const quote =
+                document.createElement(
+                    'div'
                 );
 
-            if (!wrapper) return;
+            quote.className =
+                'reply-quote';
 
-            const container =
-                wrapper.querySelector(
-                    '.bubble-container'
-                );
+            quote.innerText =
+                msg.replyTo;
 
-            let badge =
-                container.querySelector(
-                    '.reaction-badge'
-                );
+            bubble.appendChild(
+                quote
+            );
 
-            if (!badge) {
+        }
 
-                badge =
-                    document.createElement(
-                        'div'
-                    );
 
-                badge.className =
-                    'reaction-badge';
+        const text =
+            document.createElement(
+                'span'
+            );
 
-                badge.id =
-                    `reaction_${msgId}`;
+        text.innerText =
+            msg.text;
 
-                container.appendChild(
-                    badge
+        bubble.appendChild(
+            text
+        );
+
+
+        bubble.addEventListener(
+            'contextmenu',
+            e => {
+
+                e.preventDefault();
+
+                contextTargetMessageId =
+                    msg.id;
+
+                bubbleContextMenu.style.top =
+                    `${e.clientY}px`;
+
+                bubbleContextMenu.style.left =
+                    `${e.clientX}px`;
+
+                bubbleContextMenu.classList.remove(
+                    'hidden'
                 );
 
             }
+        );
 
-            const targetMsg =
+
+        container.appendChild(
+            bubble
+        );
+
+        wrapper.appendChild(
+            container
+        );
+
+
+        if (type === 'sent') {
+
+            const receipt =
+                document.createElement(
+                    'div'
+                );
+
+            receipt.className =
+                'msg-meta-receipt';
+
+            receipt.innerText =
+                'Delivered';
+
+            wrapper.appendChild(
+                receipt
+            );
+
+        }
+
+
+        messagesBox.appendChild(
+            wrapper
+        );
+
+        messagesBox.scrollTop =
+            messagesBox.scrollHeight;
+
+    }
+
+
+    function appendFileMessage(
+        msg,
+        type
+    ) {
+
+        const wrapper =
+            document.createElement(
+                'div'
+            );
+
+        wrapper.className =
+            `message-wrapper ${type}`;
+
+        wrapper.dataset.msgId =
+            msg.id;
+
+
+        const sender =
+            document.createElement(
+                'div'
+            );
+
+        sender.className =
+            'sender-tag';
+
+        sender.innerText =
+            msg.sender.displayName;
+
+        wrapper.appendChild(
+            sender
+        );
+
+
+        const container =
+            document.createElement(
+                'div'
+            );
+
+        container.className =
+            'bubble-container';
+
+
+        const bubble =
+            document.createElement(
+                'div'
+            );
+
+        bubble.className =
+            'bubble';
+
+
+        const link =
+            document.createElement(
+                'a'
+            );
+
+        link.href =
+            msg.fileData;
+
+        link.download =
+            msg.fileName;
+
+        link.style.color =
+            'inherit';
+
+        link.innerText =
+            `📎 ${msg.fileName}`;
+
+
+        bubble.appendChild(
+            link
+        );
+
+
+        if (
+            msg.fileData.startsWith(
+                'data:image/'
+            )
+        ) {
+
+            const image =
+                document.createElement(
+                    'img'
+                );
+
+            image.src =
+                msg.fileData;
+
+            bubble.appendChild(
+                document.createElement(
+                    'br'
+                )
+            );
+
+            bubble.appendChild(
+                image
+            );
+
+        }
+
+
+        container.appendChild(
+            bubble
+        );
+
+        wrapper.appendChild(
+            container
+        );
+
+        messagesBox.appendChild(
+            wrapper
+        );
+
+        messagesBox.scrollTop =
+            messagesBox.scrollHeight;
+
+    }
+
+
+    function appendSystemMessage(
+        text
+    ) {
+
+        const wrapper =
+            document.createElement(
+                'div'
+            );
+
+        wrapper.className =
+            'message-wrapper system';
+
+
+        const bubble =
+            document.createElement(
+                'div'
+            );
+
+        bubble.className =
+            'bubble system';
+
+        bubble.innerText =
+            text;
+
+
+        wrapper.appendChild(
+            bubble
+        );
+
+        messagesBox.appendChild(
+            wrapper
+        );
+
+        messagesBox.scrollTop =
+            messagesBox.scrollHeight;
+
+    }
+
+
+    function appendCodeMessage(
+        code
+    ) {
+
+        const wrapper =
+            document.createElement(
+                'div'
+            );
+
+        wrapper.className =
+            'message-wrapper system';
+
+
+        const bubble =
+            document.createElement(
+                'div'
+            );
+
+        bubble.className =
+            'bubble system';
+
+        bubble.innerHTML =
+            `Invitation Code: <code style="user-select:all;">${escapeHtml(code)}</code>`;
+
+
+        wrapper.appendChild(
+            bubble
+        );
+
+        messagesBox.appendChild(
+            wrapper
+        );
+
+    }
+
+
+    /*
+     * =========================================================
+     * REPLY / CONTEXT MENU
+     * =========================================================
+     */
+
+    cancelReplyBtn.addEventListener(
+        'click',
+        () => {
+
+            activeReplyingMessage =
+                null;
+
+            replyBanner.style.display =
+                'none';
+
+        }
+    );
+
+
+    ctxMenuReply.addEventListener(
+        'click',
+        () => {
+
+            const message =
                 messageLog.find(
                     m =>
                         m.id ===
-                        msgId
+                        contextTargetMessageId
                 );
 
-            if (
-                targetMsg &&
-                targetMsg.reactions
-            ) {
+            if (message) {
 
-                badge.innerText =
-                    Object.values(
-                        targetMsg.reactions
-                    ).join(' ');
+                activeReplyingMessage =
+                    message;
 
-            } else {
+                replyBannerText.innerText =
+                    `Replying to: "${message.text}"`;
 
-                badge.innerText =
-                    reaction;
+                replyBanner.style.display =
+                    'flex';
+
+                messageInput.focus();
 
             }
 
-        }
-
-
-        function appendSystemMessage(
-            text
-        ) {
-
-            const row =
-                document.createElement(
-                    'div'
-                );
-
-            row.className =
-                'message-row system';
-
-            const bubble =
-                document.createElement(
-                    'div'
-                );
-
-            bubble.className =
-                'bubble system';
-
-            bubble.innerText =
-                text;
-
-            row.appendChild(
-                bubble
+            bubbleContextMenu.classList.add(
+                'hidden'
             );
-
-            messagesBox.appendChild(
-                row
-            );
-
-            messagesBox.scrollTop =
-                messagesBox.scrollHeight;
 
         }
+    );
 
 
-        function appendCodeMessage(
-            code
-        ) {
+    ctxMenuSender.addEventListener(
+        'click',
+        () => {
 
-            const row =
-                document.createElement(
-                    'div'
+            const message =
+                messageLog.find(
+                    m =>
+                        m.id ===
+                        contextTargetMessageId
                 );
 
-            row.className =
-                'message-row system';
+            if (message) {
 
-            const bubble =
-                document.createElement(
-                    'div'
+                alert(
+                    `Sender: ${message.sender.displayName} (@${message.sender.username})`
                 );
 
-            bubble.className =
-                'bubble system';
+            }
 
-            bubble.innerHTML =
-                `Invitation Code: <code style="background:var(--hover-bg); padding:2px 6px; border-radius:4px; user-select:all;">${code}</code>`;
-
-            row.appendChild(
-                bubble
+            bubbleContextMenu.classList.add(
+                'hidden'
             );
-
-            messagesBox.appendChild(
-                row
-            );
-
-            messagesBox.scrollTop =
-                messagesBox.scrollHeight;
 
         }
+    );
 
 
-        hangUpBtn.addEventListener(
-            'click',
-            () => {
+    /*
+     * =========================================================
+     * INFO / PARTICIPANTS
+     * =========================================================
+     */
 
-                if (currentCall) {
-                    currentCall.close();
+    infoBtn.addEventListener(
+        'click',
+        () => {
+
+            renderParticipantsUI();
+
+            infoModal.classList.remove(
+                'hidden'
+            );
+
+        }
+    );
+
+
+    closeInfoModalBtn.addEventListener(
+        'click',
+        () => {
+
+            infoModal.classList.add(
+                'hidden'
+            );
+
+        }
+    );
+
+
+    function renderParticipantsUI() {
+
+        participantsListContainer.innerHTML =
+            '';
+
+        onlineUsersMap.forEach(
+            (user, peerId) => {
+
+                const profile =
+                    user.profile ||
+                    user;
+
+
+                const row =
+                    document.createElement(
+                        'div'
+                    );
+
+                row.className =
+                    'user-list-item';
+
+
+                const left =
+                    document.createElement(
+                        'div'
+                    );
+
+                left.className =
+                    'user-info-left';
+
+
+                const avatar =
+                    document.createElement(
+                        'div'
+                    );
+
+                avatar.className =
+                    'list-avatar';
+
+                avatar.style.width =
+                    '30px';
+
+                avatar.style.height =
+                    '30px';
+
+
+                if (profile.avatar) {
+
+                    avatar.innerHTML =
+                        `<img src="${profile.avatar}">`;
+
+                } else {
+
+                    avatar.innerText =
+                        profile.displayName
+                            ? profile.displayName
+                                .charAt(0)
+                                .toUpperCase()
+                            : '👤';
+
                 }
 
-                endCallCleanUp();
+
+                const name =
+                    document.createElement(
+                        'span'
+                    );
+
+                name.innerText =
+                    profile.displayName +
+                    (
+                        peerId === peer.id
+                            ? ' (You)'
+                            : ''
+                    );
+
+
+                left.appendChild(
+                    avatar
+                );
+
+                left.appendChild(
+                    name
+                );
+
+
+                row.appendChild(
+                    left
+                );
+
+
+                if (
+                    peerId !==
+                    peer.id
+                ) {
+
+                    const callButton =
+                        document.createElement(
+                            'button'
+                        );
+
+                    callButton.className =
+                        'ios-btn';
+
+                    callButton.style.width =
+                        'auto';
+
+                    callButton.style.padding =
+                        '6px 10px';
+
+                    callButton.style.fontSize =
+                        '.75rem';
+
+                    callButton.innerText =
+                        'Call';
+
+
+                    callButton.onclick =
+                        () => {
+
+                            startVideoCall(
+                                peerId
+                            );
+
+                        };
+
+
+                    row.appendChild(
+                        callButton
+                    );
+
+                }
+
+
+                participantsListContainer
+                    .appendChild(
+                        row
+                    );
 
             }
         );
 
+    }
 
-        function endCallCleanUp() {
 
-            if (localStream) {
+    /*
+     * =========================================================
+     * CLEAN UP
+     * =========================================================
+     */
 
-                localStream
-                    .getTracks()
-                    .forEach(
-                        t =>
-                            t.stop()
-                    );
+    leaveConversationBtn.addEventListener(
+        'click',
+        () => {
 
-                localStream = null;
+            if (
+                confirm(
+                    'Leave current conversation?'
+                )
+            ) {
+
+                executeCleanUp();
 
             }
 
-            localVideo.srcObject =
+        }
+    );
+
+
+    function executeCleanUp() {
+
+        hideIncomingCallScreen();
+
+
+        if (incomingCall) {
+
+            try {
+                incomingCall.close();
+            } catch {}
+
+            incomingCall =
                 null;
 
-            remoteVideo.srcObject =
-                null;
+        }
 
-            videoContainer.style.display =
-                'none';
 
-            hangUpBtn.classList.add(
-                'hidden'
-            );
+        if (currentCall) {
+
+            try {
+                currentCall.close();
+            } catch {}
 
             currentCall =
                 null;
 
         }
 
-    </script>
+
+        if (localStream) {
+
+            localStream
+                .getTracks()
+                .forEach(
+                    track =>
+                        track.stop()
+                );
+
+            localStream =
+                null;
+
+        }
+
+
+        if (peer) {
+
+            try {
+                peer.destroy();
+            } catch {}
+
+            peer =
+                null;
+
+        }
+
+
+        connections = [];
+
+        hostConnection =
+            null;
+
+        onlineUsersMap.clear();
+
+        messageLog = [];
+
+
+        localVideo.srcObject =
+            null;
+
+        remoteVideo.srcObject =
+            null;
+
+        videoContainer.style.display =
+            'none';
+
+        hangUpBtn.classList.add(
+            'hidden'
+        );
+
+
+        messagesBox.innerHTML =
+            `
+            <div class="date-divider">
+                Today
+            </div>
+            `;
+
+
+        setupScreen.style.display =
+            'flex';
+
+    }
+
+
+    /*
+     * Prevent profile/avatar text from becoming HTML.
+     */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(value)
+            .replace(
+                /&/g,
+                '&amp;'
+            )
+            .replace(
+                /</g,
+                '&lt;'
+            )
+            .replace(
+                />/g,
+                '&gt;'
+            )
+            .replace(
+                /"/g,
+                '&quot;'
+            )
+            .replace(
+                /'/g,
+                '&#039;'
+            );
+
+    }
+
+
+    /*
+     * Close context menu when clicking elsewhere.
+     */
+
+    document.addEventListener(
+        'click',
+        e => {
+
+            if (
+                !e.target.closest(
+                    '#bubbleContextMenu'
+                )
+            ) {
+
+                bubbleContextMenu.classList.add(
+                    'hidden'
+                );
+
+            }
+
+        }
+    );
+
+
+    window.addEventListener(
+        'beforeunload',
+        () => {
+
+            if (localStream) {
+
+                localStream
+                    .getTracks()
+                    .forEach(
+                        track =>
+                            track.stop()
+                    );
+
+            }
+
+            if (peer) {
+
+                try {
+                    peer.destroy();
+                } catch {}
+
+            }
+
+        }
+    );
+
+</script>
 
 </body>
 </html>
