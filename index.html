@@ -877,6 +877,7 @@
             </div>
 
             <div class="auth-box" id="authBoxSection">
+
                 <input
                     type="text"
                     id="authUsername"
@@ -894,6 +895,7 @@
                 <button class="ios-btn" id="loginBtn">
                     Sign In / Create Account
                 </button>
+
             </div>
 
             <div class="auth-box hidden" id="chatSelectorSection">
@@ -926,7 +928,10 @@
 
             <div class="auth-box hidden" id="privateCreationSection">
 
-                <button class="ios-btn" id="createPrivateBtn">
+                <button
+                    class="ios-btn"
+                    id="createPrivateBtn"
+                >
                     Create New Secure Room
                 </button>
 
@@ -937,7 +942,10 @@
                     autocomplete="off"
                 >
 
-                <button class="ios-btn" id="joinPrivateBtn">
+                <button
+                    class="ios-btn"
+                    id="joinPrivateBtn"
+                >
                     Join Secure Room
                 </button>
 
@@ -981,7 +989,10 @@
 
                 </div>
 
-                <div class="chat-list" id="chatListContainer">
+                <div
+                    class="chat-list"
+                    id="chatListContainer"
+                >
 
                     <div
                         class="chat-list-item active"
@@ -1030,14 +1041,6 @@
                         style="font-size: 0.8rem; padding: 8px;"
                     >
                         Switch Rooms / Home
-                    </button>
-
-                    <button
-                        class="ios-btn ios-btn-secondary hidden"
-                        id="shutdownChatBtn"
-                        style="font-size: 0.8rem; padding: 8px; color: #ff3b30; border-color: #ff3b30;"
-                    >
-                        Shutdown Chat
                     </button>
 
                 </div>
@@ -1151,11 +1154,9 @@
                     is typing
 
                     <div class="typing-dots-box">
-
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
-
                     </div>
 
                 </div>
@@ -1486,7 +1487,8 @@
         let activeReplyingMessage = null;
         let contextTargetMessageId = null;
 
-        const PUBLIC_ROOM_PREFIX = 'xchat_apple_messages_2026';
+        const PUBLIC_ROOM_PREFIX =
+            'xchat_apple_messages_2026';
 
         const peerConfig = {
             config: {
@@ -1548,9 +1550,6 @@
 
         const leaveConversationBtn =
             document.getElementById('leaveConversationBtn');
-
-        const shutdownChatBtn =
-            document.getElementById('shutdownChatBtn');
 
         const roomTitleDisplay =
             document.getElementById('roomTitleDisplay');
@@ -1634,54 +1633,75 @@
             document.getElementById('closeInfoModalBtn');
 
         const participantsListContainer =
-            document.getElementById('participantsListContainer');
+            document.getElementById(
+                'participantsListContainer'
+            );
 
         const bubbleContextMenu =
-            document.getElementById('bubbleContextMenu');
+            document.getElementById(
+                'bubbleContextMenu'
+            );
 
         const ctxMenuReply =
-            document.getElementById('ctxMenuReply');
+            document.getElementById(
+                'ctxMenuReply'
+            );
 
         const ctxMenuSender =
-            document.getElementById('ctxMenuSender');
+            document.getElementById(
+                'ctxMenuSender'
+            );
 
         const replyBanner =
-            document.getElementById('replyBanner');
+            document.getElementById(
+                'replyBanner'
+            );
 
         const replyBannerText =
-            document.getElementById('replyBannerText');
+            document.getElementById(
+                'replyBannerText'
+            );
 
         const cancelReplyBtn =
-            document.getElementById('cancelReplyBtn');
+            document.getElementById(
+                'cancelReplyBtn'
+            );
 
         const emojiBtn =
-            document.getElementById('emojiBtn');
+            document.getElementById(
+                'emojiBtn'
+            );
 
         const emojiPickerPopup =
-            document.getElementById('emojiPickerPopup');
+            document.getElementById(
+                'emojiPickerPopup'
+            );
 
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener(
+            'DOMContentLoaded',
+            () => {
 
-            const savedSession =
-                localStorage.getItem('xchat_current_user');
+                const savedSession =
+                    localStorage.getItem(
+                        'xchat_current_user'
+                    );
 
-            if (savedSession) {
+                if (savedSession) {
 
-                currentUser =
-                    JSON.parse(savedSession);
+                    currentUser =
+                        JSON.parse(
+                            savedSession
+                        );
 
-                /*
-                 * Old admin sessions are deliberately not
-                 * treated specially. There is no admin system.
-                 */
+                    enterLoggedInState();
 
-                enterLoggedInState();
+                }
+
+                requestNotificationPermission();
+
             }
-
-            requestNotificationPermission();
-
-        });
+        );
 
 
         function requestNotificationPermission() {
@@ -1690,125 +1710,187 @@
                 'Notification' in window &&
                 Notification.permission !== 'granted'
             ) {
+
                 Notification.requestPermission();
+
             }
 
         }
 
 
-        window.addEventListener('click', () => {
+        window.addEventListener(
+            'click',
+            () => {
 
-            bubbleContextMenu.classList.add('hidden');
-            emojiPickerPopup.classList.add('hidden');
+                bubbleContextMenu.classList.add(
+                    'hidden'
+                );
 
-        });
-
-
-        window.addEventListener('beforeunload', () => {
-
-            if (localStream) {
-                localStream
-                    .getTracks()
-                    .forEach(track => track.stop());
-            }
-
-            if (peer) {
-                peer.destroy();
-            }
-
-        });
-
-
-        /*
-         * NORMAL USER LOGIN ONLY
-         *
-         * There is intentionally no admin username,
-         * no admin password and no admin login branch.
-         */
-
-        loginBtn.addEventListener('click', () => {
-
-            const uName =
-                authUsername.value.trim().toLowerCase();
-
-            const pass =
-                authPassword.value.trim();
-
-            if (!uName || !pass) {
-                alert('Enter username & password.');
-                return;
-            }
-
-            const savedAcc =
-                localStorage.getItem('xchat_acc_' + uName);
-
-            if (savedAcc) {
-
-                const acc =
-                    JSON.parse(savedAcc);
-
-                if (acc.password !== pass) {
-                    alert('Incorrect password.');
-                    return;
-                }
-
-                currentUser = acc;
-
-            } else {
-
-                currentUser = {
-                    username: uName,
-                    displayName: authUsername.value.trim(),
-                    password: pass,
-                    avatar: ''
-                };
-
-                localStorage.setItem(
-                    'xchat_acc_' + uName,
-                    JSON.stringify(currentUser)
+                emojiPickerPopup.classList.add(
+                    'hidden'
                 );
 
             }
-
-            localStorage.setItem(
-                'xchat_current_user',
-                JSON.stringify(currentUser)
-            );
-
-            enterLoggedInState();
-
-        });
+        );
 
 
-        logoutBtn.addEventListener('click', () => {
+        window.addEventListener(
+            'beforeunload',
+            () => {
 
-            localStorage.removeItem(
-                'xchat_current_user'
-            );
+                if (localStream) {
 
-            currentUser = {
-                username: '',
-                displayName: '',
-                avatar: '',
-                password: ''
-            };
+                    localStream
+                        .getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
 
-            chatSelectorSection.classList.add('hidden');
-            authBoxSection.classList.remove('hidden');
+                }
 
-            authUsername.value = '';
-            authPassword.value = '';
+                if (peer) {
+                    peer.destroy();
+                }
 
-        });
+            }
+        );
+
+
+        loginBtn.addEventListener(
+            'click',
+            () => {
+
+                const uName =
+                    authUsername.value
+                        .trim()
+                        .toLowerCase();
+
+                const pass =
+                    authPassword.value.trim();
+
+                if (!uName || !pass) {
+
+                    alert(
+                        'Enter username & password.'
+                    );
+
+                    return;
+
+                }
+
+                const savedAcc =
+                    localStorage.getItem(
+                        'xchat_acc_' + uName
+                    );
+
+                if (savedAcc) {
+
+                    const acc =
+                        JSON.parse(
+                            savedAcc
+                        );
+
+                    if (
+                        acc.password !== pass
+                    ) {
+
+                        alert(
+                            'Incorrect password.'
+                        );
+
+                        return;
+
+                    }
+
+                    currentUser = acc;
+
+                } else {
+
+                    currentUser = {
+
+                        username: uName,
+
+                        displayName:
+                            authUsername.value.trim(),
+
+                        password: pass,
+
+                        avatar: ''
+
+                    };
+
+                    localStorage.setItem(
+                        'xchat_acc_' + uName,
+                        JSON.stringify(
+                            currentUser
+                        )
+                    );
+
+                }
+
+                localStorage.setItem(
+                    'xchat_current_user',
+                    JSON.stringify(
+                        currentUser
+                    )
+                );
+
+                enterLoggedInState();
+
+            }
+        );
+
+
+        logoutBtn.addEventListener(
+            'click',
+            () => {
+
+                localStorage.removeItem(
+                    'xchat_current_user'
+                );
+
+                currentUser = {
+
+                    username: '',
+                    displayName: '',
+                    avatar: '',
+                    password: ''
+
+                };
+
+                chatSelectorSection.classList.add(
+                    'hidden'
+                );
+
+                privateCreationSection.classList.add(
+                    'hidden'
+                );
+
+                authBoxSection.classList.remove(
+                    'hidden'
+                );
+
+                authUsername.value = '';
+                authPassword.value = '';
+
+            }
+        );
 
 
         function enterLoggedInState() {
 
-            authBoxSection.classList.add('hidden');
+            authBoxSection.classList.add(
+                'hidden'
+            );
 
-            privateCreationSection.classList.add('hidden');
+            privateCreationSection.classList.add(
+                'hidden'
+            );
 
-            chatSelectorSection.classList.remove('hidden');
+            chatSelectorSection.classList.remove(
+                'hidden'
+            );
 
             loggedInUserDisplay.innerText =
                 `Signed in as ${currentUser.displayName}`;
@@ -1839,46 +1921,60 @@
         }
 
 
-        sidebarProfileBtn.addEventListener('click', () => {
+        sidebarProfileBtn.addEventListener(
+            'click',
+            () => {
 
-            if (!currentUser.username) {
-                alert('Sign in first.');
-                return;
+                if (!currentUser.username) {
+
+                    alert(
+                        'Sign in first.'
+                    );
+
+                    return;
+
+                }
+
+                modalDisplayNameInput.value =
+                    currentUser.displayName;
+
+                if (currentUser.avatar) {
+
+                    modalAvatarPreview.innerHTML =
+                        `<img src="${currentUser.avatar}">`;
+
+                } else {
+
+                    modalAvatarPreview.innerText =
+                        currentUser.displayName
+                            ? currentUser.displayName
+                                .charAt(0)
+                                .toUpperCase()
+                            : '👤';
+
+                }
+
+                profileModal.classList.remove(
+                    'hidden'
+                );
+
             }
-
-            modalDisplayNameInput.value =
-                currentUser.displayName;
-
-            if (currentUser.avatar) {
-
-                modalAvatarPreview.innerHTML =
-                    `<img src="${currentUser.avatar}">`;
-
-            } else {
-
-                modalAvatarPreview.innerText =
-                    currentUser.displayName
-                        ? currentUser.displayName
-                            .charAt(0)
-                            .toUpperCase()
-                        : '👤';
-
-            }
-
-            profileModal.classList.remove('hidden');
-
-        });
+        );
 
 
         closeProfileModalBtn.addEventListener(
             'click',
-            () => profileModal.classList.add('hidden')
+            () =>
+                profileModal.classList.add(
+                    'hidden'
+                )
         );
 
 
         uploadAvatarBtn.addEventListener(
             'click',
-            () => profilePicInput.click()
+            () =>
+                profilePicInput.click()
         );
 
 
@@ -1894,17 +1990,20 @@
                 const reader =
                     new FileReader();
 
-                reader.onload = (evt) => {
+                reader.onload =
+                    (evt) => {
 
-                    modalAvatarPreview.innerHTML =
-                        `<img src="${evt.target.result}">`;
+                        modalAvatarPreview.innerHTML =
+                            `<img src="${evt.target.result}">`;
 
-                    modalAvatarPreview.dataset.tempAvatar =
-                        evt.target.result;
+                        modalAvatarPreview.dataset.tempAvatar =
+                            evt.target.result;
 
-                };
+                    };
 
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(
+                    file
+                );
 
             }
         );
@@ -1915,7 +2014,9 @@
             () => {
 
                 const newName =
-                    modalDisplayNameInput.value.trim();
+                    modalDisplayNameInput
+                        .value
+                        .trim();
 
                 if (!newName) return;
 
@@ -1923,24 +2024,34 @@
                     newName;
 
                 if (
-                    modalAvatarPreview.dataset.tempAvatar
+                    modalAvatarPreview.dataset
+                        .tempAvatar
                 ) {
 
                     currentUser.avatar =
-                        modalAvatarPreview.dataset.tempAvatar;
+                        modalAvatarPreview
+                            .dataset
+                            .tempAvatar;
 
-                    delete modalAvatarPreview.dataset.tempAvatar;
+                    delete modalAvatarPreview
+                        .dataset
+                        .tempAvatar;
 
                 }
 
                 localStorage.setItem(
-                    'xchat_acc_' + currentUser.username,
-                    JSON.stringify(currentUser)
+                    'xchat_acc_' +
+                    currentUser.username,
+                    JSON.stringify(
+                        currentUser
+                    )
                 );
 
                 localStorage.setItem(
                     'xchat_current_user',
-                    JSON.stringify(currentUser)
+                    JSON.stringify(
+                        currentUser
+                    )
                 );
 
                 updateUserAvatarUI();
@@ -1948,7 +2059,9 @@
                 loggedInUserDisplay.innerText =
                     `Signed in as ${currentUser.displayName}`;
 
-                profileModal.classList.add('hidden');
+                profileModal.classList.add(
+                    'hidden'
+                );
 
             }
         );
@@ -1960,14 +2073,17 @@
 
                 const theme =
                     document.documentElement
-                        .getAttribute('data-theme');
+                        .getAttribute(
+                            'data-theme'
+                        );
 
-                document.documentElement.setAttribute(
-                    'data-theme',
-                    theme === 'dark'
-                        ? 'light'
-                        : 'dark'
-                );
+                document.documentElement
+                    .setAttribute(
+                        'data-theme',
+                        theme === 'dark'
+                            ? 'light'
+                            : 'dark'
+                    );
 
             }
         );
@@ -1979,7 +2095,9 @@
 
                 renderParticipantsUI();
 
-                infoModal.classList.remove('hidden');
+                infoModal.classList.remove(
+                    'hidden'
+                );
 
             }
         );
@@ -1987,7 +2105,10 @@
 
         closeInfoModalBtn.addEventListener(
             'click',
-            () => infoModal.classList.add('hidden')
+            () =>
+                infoModal.classList.add(
+                    'hidden'
+                )
         );
 
 
@@ -1995,9 +2116,13 @@
             'click',
             () => {
 
-                chatSelectorSection.classList.add('hidden');
+                chatSelectorSection.classList.add(
+                    'hidden'
+                );
 
-                privateCreationSection.classList.remove('hidden');
+                privateCreationSection.classList.remove(
+                    'hidden'
+                );
 
             }
         );
@@ -2007,9 +2132,13 @@
             'click',
             () => {
 
-                privateCreationSection.classList.add('hidden');
+                privateCreationSection.classList.add(
+                    'hidden'
+                );
 
-                chatSelectorSection.classList.remove('hidden');
+                chatSelectorSection.classList.remove(
+                    'hidden'
+                );
 
             }
         );
@@ -2021,7 +2150,8 @@
 
                 activeReplyingMessage = null;
 
-                replyBanner.style.display = 'none';
+                replyBanner.style.display =
+                    'none';
 
             }
         );
@@ -2031,43 +2161,13 @@
             'click',
             () => {
 
-                if (confirm("Leave current conversation?")) {
-                    executeCleanUp();
-                }
-
-            }
-        );
-
-
-        shutdownChatBtn.addEventListener(
-            'click',
-            () => {
-
-                if (!isHost) {
-                    alert(
-                        "Only the host can shut down this chat."
-                    );
-                    return;
-                }
-
                 if (
                     confirm(
-                        "Are you sure you want to shut down this entire chat session?"
+                        "Leave current conversation?"
                     )
                 ) {
 
-                    const shutdownPacket = {
-                        type: 'SHUTDOWN'
-                    };
-
-                    broadcastPacket(
-                        shutdownPacket,
-                        null
-                    );
-
-                    executeCleanUp(
-                        "The chat session has been shut down by the host."
-                    );
+                    executeCleanUp();
 
                 }
 
@@ -2075,13 +2175,15 @@
         );
 
 
-        function executeCleanUp(reason) {
+        function executeCleanUp() {
 
             if (localStream) {
 
                 localStream
                     .getTracks()
-                    .forEach(t => t.stop());
+                    .forEach(
+                        t => t.stop()
+                    );
 
                 localStream = null;
 
@@ -2117,21 +2219,23 @@
             messagesBox.innerHTML =
                 '<div class="date-divider">Today</div>';
 
-            videoContainer.style.display = 'none';
+            videoContainer.style.display =
+                'none';
 
-            hangUpBtn.classList.add('hidden');
+            hangUpBtn.classList.add(
+                'hidden'
+            );
 
-            shutdownChatBtn.classList.add('hidden');
+            setupScreen.style.display =
+                'flex';
 
-            setupScreen.style.display = 'flex';
+            privateCreationSection.classList.add(
+                'hidden'
+            );
 
-            privateCreationSection.classList.add('hidden');
-
-            chatSelectorSection.classList.remove('hidden');
-
-            if (reason) {
-                alert(reason);
-            }
+            chatSelectorSection.classList.remove(
+                'hidden'
+            );
 
         }
 
@@ -2140,7 +2244,8 @@
             'click',
             () => {
 
-                setupScreen.style.display = 'none';
+                setupScreen.style.display =
+                    'none';
 
                 roomTitleDisplay.innerText =
                     "Public Chat Lobby";
@@ -2158,7 +2263,8 @@
             'click',
             () => {
 
-                setupScreen.style.display = 'none';
+                setupScreen.style.display =
+                    'none';
 
                 roomTitleDisplay.innerText =
                     "Secure Conversation";
@@ -2191,13 +2297,16 @@
 
                 if (!code) {
 
-                    alert('Enter invitation code.');
+                    alert(
+                        'Enter invitation code.'
+                    );
 
                     return;
 
                 }
 
-                setupScreen.style.display = 'none';
+                setupScreen.style.display =
+                    'none';
 
                 roomTitleDisplay.innerText =
                     "Secure Conversation";
@@ -2244,10 +2353,6 @@
                         }
                     );
 
-                    shutdownChatBtn.classList.remove(
-                        'hidden'
-                    );
-
                 }
             );
 
@@ -2256,12 +2361,17 @@
                 'error',
                 (err) => {
 
-                    if (err.type === 'unavailable-id') {
+                    if (
+                        err.type ===
+                        'unavailable-id'
+                    ) {
 
                         isHost = false;
 
                         peer =
-                            new Peer(peerConfig);
+                            new Peer(
+                                peerConfig
+                            );
 
                         peer.on(
                             'open',
@@ -2321,11 +2431,14 @@
                             "Secure room created."
                         );
 
-                        appendCodeMessage(id);
+                        appendCodeMessage(
+                            id
+                        );
 
                         messageLog.push({
                             type: 'SYSTEM',
-                            text: "Secure room created.",
+                            text:
+                                "Secure room created.",
                             code: id
                         });
 
@@ -2337,10 +2450,6 @@
                             }
                         );
 
-                        shutdownChatBtn.classList.remove(
-                            'hidden'
-                        );
-
                     } else {
 
                         isHost = false;
@@ -2349,7 +2458,9 @@
                             "Connecting...";
 
                         hostConnection =
-                            peer.connect(targetId);
+                            peer.connect(
+                                targetId
+                            );
 
                         setupClientConnection();
 
@@ -2369,7 +2480,9 @@
                 'connection',
                 (conn) => {
 
-                    connections.push(conn);
+                    connections.push(
+                        conn
+                    );
 
                     conn.on(
                         'data',
@@ -2386,7 +2499,8 @@
 
                             connections =
                                 connections.filter(
-                                    c => c !== conn
+                                    c =>
+                                        c !== conn
                                 );
 
                             for (
@@ -2397,9 +2511,14 @@
                                 of onlineUsersMap.entries()
                             ) {
 
-                                if (v.conn === conn) {
+                                if (
+                                    v.conn ===
+                                    conn
+                                ) {
 
-                                    onlineUsersMap.delete(k);
+                                    onlineUsersMap.delete(
+                                        k
+                                    );
 
                                     break;
 
@@ -2450,13 +2569,16 @@
                             localStream
                         );
 
-                        currentCall = call;
+                        currentCall =
+                            call;
 
                         call.on(
                             'stream',
                             (stream) => {
+
                                 remoteVideo.srcObject =
                                     stream;
+
                             }
                         );
 
@@ -2541,34 +2663,12 @@
             sourceConn
         ) {
 
-            if (packet.type === 'SHUTDOWN') {
-
-                executeCleanUp(
-                    "The chat session was closed by the host."
-                );
-
-                return;
-
-            }
-
-
-            if (
-                packet.type === 'KICK' &&
-                packet.targetId === peer.id
-            ) {
-
-                executeCleanUp(
-                    "You have been removed from this chat."
-                );
-
-                return;
-
-            }
-
-
             if (isHost) {
 
-                if (packet.type === 'JOIN') {
+                if (
+                    packet.type ===
+                    'JOIN'
+                ) {
 
                     sourceConn.profile =
                         packet.profile;
@@ -2576,16 +2676,21 @@
                     onlineUsersMap.set(
                         packet.peerId,
                         {
-                            profile: packet.profile,
-                            conn: sourceConn,
-                            peerId: packet.peerId
+                            profile:
+                                packet.profile,
+                            conn:
+                                sourceConn,
+                            peerId:
+                                packet.peerId
                         }
                     );
 
                     const msg =
                         `${packet.profile.displayName} joined.`;
 
-                    appendSystemMessage(msg);
+                    appendSystemMessage(
+                        msg
+                    );
 
                     messageLog.push({
                         type: 'SYSTEM',
@@ -2602,11 +2707,14 @@
 
                     broadcastUserList();
 
-                    if (sourceConn.open) {
+                    if (
+                        sourceConn.open
+                    ) {
 
                         sourceConn.send({
                             type: 'HISTORY',
-                            history: messageLog
+                            history:
+                                messageLog
                         });
 
                     }
@@ -2614,22 +2722,35 @@
                     return;
 
                 } else if (
-                    packet.type === 'CHAT' ||
-                    packet.type === 'FILE' ||
-                    packet.type === 'REACTION'
+                    packet.type ===
+                        'CHAT' ||
+                    packet.type ===
+                        'FILE' ||
+                    packet.type ===
+                        'REACTION'
                 ) {
 
-                    if (packet.type === 'REACTION') {
+                    if (
+                        packet.type ===
+                        'REACTION'
+                    ) {
 
                         const targetMsg =
                             messageLog.find(
-                                m => m.id === packet.msgId
+                                m =>
+                                    m.id ===
+                                    packet.msgId
                             );
 
                         if (targetMsg) {
 
-                            if (!targetMsg.reactions) {
-                                targetMsg.reactions = {};
+                            if (
+                                !targetMsg.reactions
+                            ) {
+
+                                targetMsg.reactions =
+                                    {};
+
                             }
 
                             targetMsg.reactions[
@@ -2641,7 +2762,9 @@
 
                     } else {
 
-                        messageLog.push(packet);
+                        messageLog.push(
+                            packet
+                        );
 
                     }
 
@@ -2655,7 +2778,10 @@
             }
 
 
-            if (packet.type === 'READ_RECEIPT') {
+            if (
+                packet.type ===
+                'READ_RECEIPT'
+            ) {
 
                 const receipts =
                     document.querySelectorAll(
@@ -2663,7 +2789,9 @@
                     );
 
                 receipts.forEach(
-                    r => r.innerText = 'Read'
+                    r =>
+                        r.innerText =
+                            'Read'
                 );
 
                 return;
@@ -2671,17 +2799,27 @@
             }
 
 
-            if (packet.type === 'REACTION') {
+            if (
+                packet.type ===
+                'REACTION'
+            ) {
 
                 const targetMsg =
                     messageLog.find(
-                        m => m.id === packet.msgId
+                        m =>
+                            m.id ===
+                            packet.msgId
                     );
 
                 if (targetMsg) {
 
-                    if (!targetMsg.reactions) {
-                        targetMsg.reactions = {};
+                    if (
+                        !targetMsg.reactions
+                    ) {
+
+                        targetMsg.reactions =
+                            {};
+
                     }
 
                     targetMsg.reactions[
@@ -2705,13 +2843,19 @@
                 packet.sender &&
                 packet.sender.username ===
                     currentUser.username &&
-                packet.type !== 'SYSTEM'
+                packet.type !==
+                    'SYSTEM'
             ) {
+
                 return;
+
             }
 
 
-            if (packet.type === 'CHAT') {
+            if (
+                packet.type ===
+                'CHAT'
+            ) {
 
                 appendMessage(
                     packet,
@@ -2724,7 +2868,8 @@
                 sendReadReceipt();
 
             } else if (
-                packet.type === 'FILE'
+                packet.type ===
+                'FILE'
             ) {
 
                 appendFileMessage(
@@ -2738,7 +2883,8 @@
                 sendReadReceipt();
 
             } else if (
-                packet.type === 'SYSTEM'
+                packet.type ===
+                'SYSTEM'
             ) {
 
                 appendSystemMessage(
@@ -2752,7 +2898,8 @@
                 }
 
             } else if (
-                packet.type === 'USER_LIST'
+                packet.type ===
+                'USER_LIST'
             ) {
 
                 onlineUsersMap.clear();
@@ -2766,7 +2913,8 @@
                 );
 
             } else if (
-                packet.type === 'HISTORY'
+                packet.type ===
+                'HISTORY'
             ) {
 
                 messagesBox.innerHTML =
@@ -2779,14 +2927,13 @@
                     item => {
 
                         if (
-                            item.type === 'CHAT'
+                            item.type ===
+                            'CHAT'
                         ) {
 
                             const t =
-                                (
-                                    item.sender.username ===
-                                    currentUser.username
-                                )
+                                item.sender.username ===
+                                currentUser.username
                                     ? 'sent'
                                     : 'received';
 
@@ -2796,28 +2943,32 @@
                             );
 
                         } else if (
-                            item.type === 'SYSTEM'
+                            item.type ===
+                            'SYSTEM'
                         ) {
 
                             appendSystemMessage(
                                 item.text
                             );
 
-                            if (item.code) {
+                            if (
+                                item.code
+                            ) {
+
                                 appendCodeMessage(
                                     item.code
                                 );
+
                             }
 
                         } else if (
-                            item.type === 'FILE'
+                            item.type ===
+                            'FILE'
                         ) {
 
                             const t =
-                                (
-                                    item.sender.username ===
-                                    currentUser.username
-                                )
+                                item.sender.username ===
+                                currentUser.username
                                     ? 'sent'
                                     : 'received';
 
@@ -2832,7 +2983,8 @@
                 );
 
             } else if (
-                packet.type === 'TYPING'
+                packet.type ===
+                'TYPING'
             ) {
 
                 typingSenderName.innerText =
@@ -2856,48 +3008,6 @@
                     );
 
             }
-
-        }
-
-
-        function kickUser(targetPeerId) {
-
-            if (!isHost) return;
-
-            const targetUser =
-                onlineUsersMap.get(
-                    targetPeerId
-                );
-
-            if (!targetUser) return;
-
-            const kickPacket = {
-                type: 'KICK',
-                targetId: targetPeerId
-            };
-
-            if (
-                targetUser.conn &&
-                targetUser.conn.open
-            ) {
-
-                targetUser.conn.send(
-                    kickPacket
-                );
-
-                targetUser.conn.close();
-
-            }
-
-            onlineUsersMap.delete(
-                targetPeerId
-            );
-
-            broadcastUserList();
-
-            appendSystemMessage(
-                `${targetUser.profile.displayName} was removed from the chat.`
-            );
 
         }
 
@@ -2941,7 +3051,9 @@
                         c !== exclude &&
                         c.open
                     ) {
+
                         c.send(packet);
+
                     }
 
                 }
@@ -2958,8 +3070,10 @@
                 (v, k) => {
 
                     users.push({
-                        profile: v.profile || v,
-                        peerId: k
+                        profile:
+                            v.profile || v,
+                        peerId:
+                            k
                     });
 
                 }
@@ -2998,19 +3112,25 @@
                         val.profile || val;
 
                     const row =
-                        document.createElement('div');
+                        document.createElement(
+                            'div'
+                        );
 
                     row.className =
                         'user-list-item';
 
                     const left =
-                        document.createElement('div');
+                        document.createElement(
+                            'div'
+                        );
 
                     left.className =
                         'user-info-left';
 
                     const av =
-                        document.createElement('div');
+                        document.createElement(
+                            'div'
+                        );
 
                     av.className =
                         'list-avatar';
@@ -3041,7 +3161,9 @@
                     }
 
                     const nameSpan =
-                        document.createElement('span');
+                        document.createElement(
+                            'span'
+                        );
 
                     nameSpan.style.fontSize =
                         '0.85rem';
@@ -3057,13 +3179,22 @@
                                 : ''
                         );
 
-                    left.appendChild(av);
-                    left.appendChild(nameSpan);
+                    left.appendChild(
+                        av
+                    );
 
-                    row.appendChild(left);
+                    left.appendChild(
+                        nameSpan
+                    );
+
+                    row.appendChild(
+                        left
+                    );
 
                     const actionsDiv =
-                        document.createElement('div');
+                        document.createElement(
+                            'div'
+                        );
 
                     actionsDiv.style.display =
                         'flex';
@@ -3071,10 +3202,15 @@
                     actionsDiv.style.gap =
                         '4px';
 
-                    if (peerId !== peer.id) {
+                    if (
+                        peerId !==
+                        peer.id
+                    ) {
 
                         const callBtn =
-                            document.createElement('button');
+                            document.createElement(
+                                'button'
+                            );
 
                         callBtn.className =
                             'ios-btn';
@@ -3103,66 +3239,14 @@
 
                     }
 
-                    if (
-                        isHost &&
-                        peerId !== peer.id
-                    ) {
-
-                        const banBtn =
-                            document.createElement('button');
-
-                        banBtn.className =
-                            'ios-btn';
-
-                        banBtn.style.fontSize =
-                            '0.75rem';
-
-                        banBtn.style.padding =
-                            '4px 8px';
-
-                        banBtn.style.width =
-                            'auto';
-
-                        banBtn.style.background =
-                            '#ff3b30';
-
-                        banBtn.innerText =
-                            'Ban';
-
-                        banBtn.onclick =
-                            () => {
-
-                                if (
-                                    confirm(
-                                        `Are you sure you want to remove ${profile.displayName}?`
-                                    )
-                                ) {
-
-                                    kickUser(
-                                        peerId
-                                    );
-
-                                    infoModal.classList.add(
-                                        'hidden'
-                                    );
-
-                                }
-
-                            };
-
-                        actionsDiv.appendChild(
-                            banBtn
-                        );
-
-                    }
-
                     row.appendChild(
                         actionsDiv
                     );
 
-                    participantsListContainer.appendChild(
-                        row
-                    );
+                    participantsListContainer
+                        .appendChild(
+                            row
+                        );
 
                 }
             );
@@ -3208,14 +3292,17 @@
             call.on(
                 'stream',
                 (stream) => {
+
                     remoteVideo.srcObject =
                         stream;
+
                 }
             );
 
             call.on(
                 'close',
-                () => endCallCleanUp()
+                () =>
+                    endCallCleanUp()
             );
 
         }
@@ -3226,9 +3313,13 @@
             () => {
 
                 const p = {
-                    type: 'TYPING',
+
+                    type:
+                        'TYPING',
+
                     displayName:
                         currentUser.displayName
+
                 };
 
                 if (isHost) {
@@ -3243,7 +3334,9 @@
                     hostConnection.open
                 ) {
 
-                    hostConnection.send(p);
+                    hostConnection.send(
+                        p
+                    );
 
                 }
 
@@ -3263,13 +3356,16 @@
                 if (!text) return;
 
                 const timeStr =
-                    new Date().toLocaleTimeString(
-                        [],
-                        {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }
-                    );
+                    new Date()
+                        .toLocaleTimeString(
+                            [],
+                            {
+                                hour:
+                                    '2-digit',
+                                minute:
+                                    '2-digit'
+                            }
+                        );
 
                 const msgId =
                     'msg_' +
@@ -3279,15 +3375,20 @@
 
                 const packet = {
 
-                    type: 'CHAT',
+                    type:
+                        'CHAT',
 
-                    id: msgId,
+                    id:
+                        msgId,
 
-                    sender: currentUser,
+                    sender:
+                        currentUser,
 
-                    text: text,
+                    text:
+                        text,
 
-                    time: timeStr,
+                    time:
+                        timeStr,
 
                     replyTo:
                         activeReplyingMessage
@@ -3346,7 +3447,8 @@
 
         fileBtn.addEventListener(
             'click',
-            () => fileInput.click()
+            () =>
+                fileInput.click()
         );
 
 
@@ -3370,8 +3472,10 @@
                                 .toLocaleTimeString(
                                     [],
                                     {
-                                        hour: '2-digit',
-                                        minute: '2-digit'
+                                        hour:
+                                            '2-digit',
+                                        minute:
+                                            '2-digit'
                                     }
                                 );
 
@@ -3383,11 +3487,14 @@
 
                         const packet = {
 
-                            type: 'FILE',
+                            type:
+                                'FILE',
 
-                            id: msgId,
+                            id:
+                                msgId,
 
-                            sender: currentUser,
+                            sender:
+                                currentUser,
 
                             fileData:
                                 evt.target.result,
@@ -3493,7 +3600,9 @@
         ) {
 
             const wrapper =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             wrapper.className =
                 `message-wrapper ${type} show-sender`;
@@ -3502,7 +3611,9 @@
                 msg.id;
 
             const senderTag =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             senderTag.className =
                 'sender-tag';
@@ -3515,13 +3626,17 @@
             );
 
             const container =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             container.className =
                 'bubble-container';
 
             const bubble =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             bubble.className =
                 'bubble';
@@ -3529,7 +3644,9 @@
             if (msg.replyTo) {
 
                 const quote =
-                    document.createElement('div');
+                    document.createElement(
+                        'div'
+                    );
 
                 quote.className =
                     'reply-quote';
@@ -3544,7 +3661,9 @@
             }
 
             const txtSpan =
-                document.createElement('span');
+                document.createElement(
+                    'span'
+                );
 
             txtSpan.innerText =
                 msg.text;
@@ -3558,6 +3677,7 @@
                 (e) => {
 
                     e.preventDefault();
+
                     e.stopPropagation();
 
                     contextTargetMessageId =
@@ -3582,11 +3702,15 @@
 
             if (
                 msg.reactions &&
-                Object.keys(msg.reactions).length > 0
+                Object.keys(
+                    msg.reactions
+                ).length > 0
             ) {
 
                 const badge =
-                    document.createElement('div');
+                    document.createElement(
+                        'div'
+                    );
 
                 badge.className =
                     'reaction-badge';
@@ -3612,7 +3736,9 @@
             if (type === 'sent') {
 
                 const meta =
-                    document.createElement('div');
+                    document.createElement(
+                        'div'
+                    );
 
                 meta.className =
                     'msg-meta-receipt';
@@ -3658,7 +3784,9 @@
         ) {
 
             const wrapper =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             wrapper.className =
                 `message-wrapper ${type} show-sender`;
@@ -3667,7 +3795,9 @@
                 msg.id;
 
             const senderTag =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             senderTag.className =
                 'sender-tag';
@@ -3680,13 +3810,17 @@
             );
 
             const container =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             container.className =
                 'bubble-container';
 
             const bubble =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             bubble.className =
                 'bubble';
@@ -3699,6 +3833,7 @@
                 (e) => {
 
                     e.preventDefault();
+
                     e.stopPropagation();
 
                     contextTargetMessageId =
@@ -3723,11 +3858,15 @@
 
             if (
                 msg.reactions &&
-                Object.keys(msg.reactions).length > 0
+                Object.keys(
+                    msg.reactions
+                ).length > 0
             ) {
 
                 const badge =
-                    document.createElement('div');
+                    document.createElement(
+                        'div'
+                    );
 
                 badge.className =
                     'reaction-badge';
@@ -3881,8 +4020,10 @@
                                 if (
                                     !targetMsg.reactions
                                 ) {
+
                                     targetMsg.reactions =
                                         {};
+
                                 }
 
                                 targetMsg.reactions[
@@ -3951,7 +4092,9 @@
             if (!badge) {
 
                 badge =
-                    document.createElement('div');
+                    document.createElement(
+                        'div'
+                    );
 
                 badge.className =
                     'reaction-badge';
@@ -3967,7 +4110,9 @@
 
             const targetMsg =
                 messageLog.find(
-                    m => m.id === msgId
+                    m =>
+                        m.id ===
+                        msgId
                 );
 
             if (
@@ -3995,13 +4140,17 @@
         ) {
 
             const row =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             row.className =
                 'message-row system';
 
             const bubble =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             bubble.className =
                 'bubble system';
@@ -4028,13 +4177,17 @@
         ) {
 
             const row =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             row.className =
                 'message-row system';
 
             const bubble =
-                document.createElement('div');
+                document.createElement(
+                    'div'
+                );
 
             bubble.className =
                 'bubble system';
@@ -4077,7 +4230,8 @@
                 localStream
                     .getTracks()
                     .forEach(
-                        t => t.stop()
+                        t =>
+                            t.stop()
                     );
 
                 localStream = null;
